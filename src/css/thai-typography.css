@@ -1,0 +1,135 @@
+/**
+ * RAKTHAN — typography สำหรับภาษาไทย
+ *
+ * ปัญหาที่ไฟล์นี้แก้: ภาษาไทยมีสระบนและวรรณยุกต์ซ้อนกัน 2 ชั้น
+ * ถ้าใช้ line-height มาตรฐานของเว็บฝรั่ง (1.5) สระจะชนกันระหว่างบรรทัด
+ *
+ * กฎเหล็ก (CLAUDE.md หัวข้อ 3.3):
+ *   1. line-height ของเนื้อหาไทย ห้ามต่ำกว่า 1.75
+ *   2. ฟอนต์เนื้อหา ห้ามต่ำกว่า 16px
+ *   3. ห้าม text-transform: uppercase กับข้อความที่อาจมีไทยปน
+ *   4. ห้ามใช้น้ำหนักต่ำกว่า 400
+ *   5. ห้ามใช้ตัวหนา 700 (ไม่ได้โหลดมา จะได้ synthetic bold ที่ทำให้สระเละ)
+ */
+
+:root {
+  --ifm-font-family-base: 'IBM Plex Sans Thai', -apple-system, 'Segoe UI', sans-serif;
+  --ifm-font-family-monospace: 'IBM Plex Mono', 'Consolas', monospace;
+
+  /* ค่าที่ปรับมาสำหรับภาษาไทยโดยเฉพาะ */
+  --ifm-line-height-base: 1.85;
+  --ifm-font-size-base: 17px;
+  --ifm-heading-line-height: 1.5;
+  --ifm-paragraph-margin-bottom: 1.25rem;
+
+  /* โหลดแค่ 400/600 — ตัวหนาต้องเป็น 600 ห้ามเป็น 700
+     ไม่งั้นเบราว์เซอร์จะสังเคราะห์ตัวหนาขึ้นมาเอง แล้วสระไทยจะเละ */
+  --ifm-font-weight-semibold: 600;
+  --ifm-font-weight-bold: 600;
+  --ifm-heading-font-weight: 600;
+}
+
+/* ความกว้างบรรทัดที่อ่านสบาย
+   ห้ามใช้หน่วย ch — ch คือความกว้างของเลข "0" ในฟอนต์
+   อักขระไทยแคบกว่า "0" ทำให้ 68ch บรรจุอักษรไทยได้มากกว่า 68 ตัวมาก
+   ผลคือบรรทัดยาวเกินตั้งใจ ซึ่งตรงข้ามกับเหตุผลที่เราจำกัดความกว้างตั้งแต่แรก */
+.markdown {
+  max-width: 40rem;
+}
+
+/* หัวข้อภาษาไทยต้องการ padding บนมากกว่าปกติ เพราะสระบนของบรรทัดแรก */
+.markdown h2 {
+  margin-top: var(--rk-space-6);
+  padding-top: var(--rk-space-2);
+  border-top: 1px solid var(--rk-border);
+}
+
+.markdown h3 {
+  margin-top: var(--rk-space-5);
+}
+
+/* ห้ามตัดคำไทยกลางคำ
+   เบราว์เซอร์ตัดบรรทัดภาษาไทยด้วยพจนานุกรมได้ก็ต่อเมื่อมี lang="th"
+   ซึ่งมาจาก i18n.defaultLocale ใน docusaurus.config.ts — ห้ามลบ */
+.markdown p,
+.markdown li,
+.markdown td,
+.markdown th {
+  word-break: normal;
+  overflow-wrap: break-word;
+  line-break: normal;
+  hyphens: none;
+}
+
+/* โค้ดในบรรทัดข้อความไทย ต้องลด line-height ไม่งั้นบรรทัดเบี้ยว */
+.markdown code {
+  line-height: 1.4;
+  font-size: 0.9em;
+  padding: 0.15em 0.4em;
+  background: var(--rk-bg-code);
+  border-radius: 4px;
+}
+
+/* code block ไม่ต้องลด line-height ลงมากเท่า inline code */
+.markdown pre code {
+  line-height: 1.65;
+  padding: 0;
+  background: none;
+}
+
+/* ตารางภาษาไทยต้องการ padding มากกว่าปกติ */
+.markdown table td,
+.markdown table th {
+  padding: 0.75rem 1rem;
+  line-height: 1.7;
+}
+
+/* ตารางกว้างเกินจอต้องเลื่อนในกล่องตัวเอง ไม่ใช่ดันทั้งหน้าให้เลื่อนแนวนอน */
+.markdown table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* รายการภาษาไทยต้องการระยะห่างระหว่างข้อมากกว่าปกติ */
+.markdown li + li {
+  margin-top: var(--rk-space-2);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Accessibility
+   ═══════════════════════════════════════════════════════════ */
+
+/* Focus ring — ต้องเห็นชัดทั้งสองโหมด
+   ห้ามเขียน outline: none ที่ไหนโดยไม่มีตัวแทน */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: var(--rk-focus-width) solid var(--rk-focus);
+  outline-offset: var(--rk-focus-offset);
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   มือถือ — ตรวจที่ 375px ทุกครั้งก่อนบอกว่างานเสร็จ
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  :root {
+    /* ห้ามลดต่ำกว่า 16px */
+    --ifm-font-size-base: 16px;
+  }
+
+  .markdown h2 {
+    margin-top: var(--rk-space-5);
+  }
+}

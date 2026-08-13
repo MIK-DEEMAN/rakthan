@@ -1,0 +1,42 @@
+name: CI
+
+# กฎที่ไม่มีเครื่องตรวจ คือกฎที่จะหายไปใน 3 เดือน
+# ทุกกฎใน CLAUDE.md ที่ตรวจด้วยเครื่องได้ ต้องถูกตรวจตรงนี้
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    name: ตรวจกฎและบิลด์
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: ติดตั้ง dependency
+        run: npm ci
+
+      # แยกเป็นขั้นละอย่าง เพื่อให้เห็นชัดว่าอะไรพังตอนอ่าน log
+      - name: ตรวจ frontmatter (ฟิลด์ครบ, prereq มีจริง, ไม่วนซ้ำ, มีเฉลย)
+        run: npm run check:frontmatter
+
+      - name: ตรวจคอนทราสต์ของ design token ทั้งสองโหมด
+        run: npm run check:contrast
+
+      - name: ตรวจร้อยแก้วและการ hardcode สี
+        run: npm run check:prose
+
+      - name: ตรวจชนิดข้อมูล TypeScript
+        run: npm run typecheck
+
+      # onBrokenLinks: 'throw' ทำให้ลิงก์ภายในที่เสียทำให้ build พังตรงนี้
+      - name: บิลด์
+        run: npm run build

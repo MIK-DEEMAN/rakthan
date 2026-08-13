@@ -1,0 +1,226 @@
+/**
+ * RAKTHAN — design tokens และ base styles
+ *
+ * ห้าม hardcode สีที่ไฟล์อื่นเด็ดขาด ใช้ตัวแปรจากไฟล์นี้เท่านั้น
+ * ทุกค่าสีผ่าน scripts/check-contrast.mjs แล้ว — ถ้าแก้สีต้องรันสคริปต์ซ้ำ
+ * รายละเอียดเหตุผลอยู่ใน CLAUDE.md หัวข้อ 3
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   ฟอนต์ — self-host เท่านั้น ห้ามใช้ Google Fonts CDN
+   เหตุผล 4 ข้อ อยู่ใน CLAUDE.md หัวข้อ 3.2
+
+   โหลดแค่น้ำหนัก 400 กับ 600 และแยก subset ไทย/ละติน ด้วย unicode-range
+   เพื่อให้หน้าที่ไม่มีอักษรไทยไม่ต้องโหลดไฟล์ไทย
+   ═══════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: 'IBM Plex Sans Thai';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/plex-sans-thai-thai-400.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'IBM Plex Sans Thai';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/plex-sans-thai-latin-400.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans Thai';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/plex-sans-thai-thai-600.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'IBM Plex Sans Thai';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/plex-sans-thai-latin-600.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/plex-mono-latin-400.woff2') format('woff2');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Design tokens — โหมดสว่าง
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand ── */
+  --rk-primary: #1e5f8e;          /* 6.81:1 บนขาว */
+  --rk-primary-dark: #164a70;
+  --rk-primary-light: #2d7fb8;
+
+  /* --rk-accent ใช้ได้เฉพาะพื้นหลัง เส้นขอบ และไอคอนขนาดใหญ่
+     ห้ามใช้กับข้อความ — คอนทราสต์แค่ 2.99:1 */
+  --rk-accent: #e07a3f;
+  --rk-accent-text: #a75b2f;      /* 5.02:1 — ใช้กับข้อความแทน */
+
+  /* สีข้อความที่วางบนพื้น --rk-primary (เช่น ปุ่มหลัก) */
+  --rk-on-primary: #ffffff;
+
+  /* ── สีประจำแกนวิชา — ผ่าน 5:1 ทุกตัวบนพื้นขาว ── */
+  --rk-track-prog: #487957;   /* เขียว        - Programming        5.06:1 */
+  --rk-track-math: #6b5b95;   /* ม่วง         - Mathematics        5.91:1 */
+  --rk-track-hard: #a65c1b;   /* ส้มเข้ม      - Hardware & Systems 5.04:1 */
+  --rk-track-data: #2c7873;   /* เขียวน้ำทะเล - Data & AI          5.20:1 */
+  --rk-track-net:  #1e5f8e;   /* น้ำเงิน      - Networks           6.81:1 */
+  --rk-track-prof: #856b44;   /* น้ำตาล       - Professional       5.02:1 */
+
+  /* ── Callout — ครบทั้ง 6 type ที่ <Callout> รองรับ ──
+     -bg     พื้นกล่อง
+     -border เส้นขอบ  (≥3:1 เทียบพื้นกล่อง)
+     -icon   ไอคอนและหัวเรื่อง (≥4.5:1 เทียบพื้นกล่อง) */
+  --rk-cal-misconception-bg: #fff8e6;
+  --rk-cal-misconception-border: #c48200;
+  --rk-cal-misconception-icon: #9c6800;
+
+  --rk-cal-note-bg: #eef4fa;
+  --rk-cal-note-border: #1e5f8e;
+  --rk-cal-note-icon: #1e5f8e;
+
+  --rk-cal-tip-bg: #edf7ed;
+  --rk-cal-tip-border: #4a7c59;
+  --rk-cal-tip-icon: #497a58;
+
+  --rk-cal-warning-bg: #fdefef;
+  --rk-cal-warning-border: #c74343;
+  --rk-cal-warning-icon: #c24141;
+
+  --rk-cal-history-bg: #f7f3ec;
+  --rk-cal-history-border: #8b6f47;
+  --rk-cal-history-icon: #866b45;
+
+  --rk-cal-deepdive-bg: #f3f1f8;
+  --rk-cal-deepdive-border: #6b5b95;
+  --rk-cal-deepdive-icon: #6b5b95;
+
+  /* ── Surface ── */
+  --rk-bg: #ffffff;
+  --rk-bg-subtle: #f7f8fa;
+  --rk-bg-code: #f4f5f7;
+  --rk-border: #e2e5e9;
+  --rk-text: #1a1d21;
+  --rk-text-muted: #5a6169;       /* 6.27:1 บนขาว */
+
+  /* ── Focus ring — จำเป็นตาม CLAUDE.md หัวข้อ 8 ── */
+  --rk-focus: #1e5f8e;            /* 6.81:1 บนขาว */
+  --rk-focus-width: 3px;
+  --rk-focus-offset: 2px;
+
+  /* ── Spacing ── */
+  --rk-space-1: 0.25rem;   /*  4px */
+  --rk-space-2: 0.5rem;    /*  8px */
+  --rk-space-3: 1rem;      /* 16px */
+  --rk-space-4: 1.5rem;    /* 24px */
+  --rk-space-5: 2rem;      /* 32px */
+  --rk-space-6: 3rem;      /* 48px */
+
+  /* ── Type scale ── */
+  --rk-text-sm: 0.9375rem;   /* ~16px — ห้ามใช้กับเนื้อหาไทย ใช้กับข้อมูลกำกับเท่านั้น */
+  --rk-text-base: 1rem;
+  --rk-text-lg: 1.125rem;
+  --rk-text-xl: 1.375rem;
+
+  --rk-radius: 8px;
+  --rk-radius-lg: 12px;
+  --rk-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+
+  --rk-transition: 150ms ease;
+
+  /* ── เชื่อม token เข้ากับตัวแปรของ Infima (theme ของ Docusaurus) ── */
+  --ifm-color-primary: var(--rk-primary);
+  --ifm-color-primary-dark: var(--rk-primary-dark);
+  --ifm-color-primary-darker: #14405f;
+  --ifm-color-primary-darkest: #0f3049;
+  --ifm-color-primary-light: var(--rk-primary-light);
+  --ifm-color-primary-lighter: #4090c7;
+  --ifm-color-primary-lightest: #66a9d4;
+
+  --ifm-background-color: var(--rk-bg);
+  --ifm-background-surface-color: var(--rk-bg-subtle);
+  --ifm-font-color-base: var(--rk-text);
+  --ifm-toc-border-color: var(--rk-border);
+  --ifm-code-background: var(--rk-bg-code);
+
+  --docusaurus-highlighted-code-line-bg: rgba(30, 95, 142, 0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Design tokens — โหมดมืด
+   ต้อง redefine ทั้ง bg, border และ icon ของ callout
+   (ถ้า redefine แค่ bg เส้นขอบที่ออกแบบมาสำหรับพื้นขาวจะดูผิดเพี้ยน)
+   ═══════════════════════════════════════════════════════════ */
+
+[data-theme='dark'] {
+  --rk-bg: #16181d;
+  --rk-bg-subtle: #1e2127;
+  --rk-bg-code: #22262e;
+  --rk-border: #2e333c;
+  --rk-text: #e8eaed;
+  --rk-text-muted: #9aa2ad;       /* 6.89:1 บนพื้นมืด */
+
+  --rk-accent-text: #e89a63;
+  --rk-focus: #6ab0e8;            /* 7.60:1 บนพื้นมืด */
+
+  /* สี track โหมดมืด — ผ่าน 5:1 ทุกตัวบนพื้น #16181d */
+  --rk-track-prog: #6fa87f;   /* 6.41:1 */
+  --rk-track-math: #9182bd;   /* 5.19:1 */
+  --rk-track-hard: #d98c45;   /* 6.59:1 */
+  --rk-track-data: #4aa39d;   /* 5.93:1 */
+  --rk-track-net:  #4a8fc0;   /* 5.06:1 */
+  --rk-track-prof: #b09370;   /* 6.13:1 */
+
+  --rk-cal-misconception-bg: #2a2415;
+  --rk-cal-misconception-border: #e0a52e;
+  --rk-cal-misconception-icon: #e0a52e;
+
+  --rk-cal-note-bg: #16222d;
+  --rk-cal-note-border: #4a8fc0;
+  --rk-cal-note-icon: #4a8fc0;
+
+  --rk-cal-tip-bg: #17251b;
+  --rk-cal-tip-border: #6fa87f;
+  --rk-cal-tip-icon: #6fa87f;
+
+  --rk-cal-warning-bg: #2a1818;
+  --rk-cal-warning-border: #d96b6b;
+  --rk-cal-warning-icon: #d96b6b;
+
+  --rk-cal-history-bg: #26211a;
+  --rk-cal-history-border: #b09370;
+  --rk-cal-history-icon: #b09370;
+
+  --rk-cal-deepdive-bg: #201d2a;
+  --rk-cal-deepdive-border: #9182bd;
+  --rk-cal-deepdive-icon: #9182bd;
+
+  --ifm-color-primary: #4a8fc0;
+  --ifm-color-primary-dark: #3a80b3;
+  --ifm-color-primary-darker: #337299;
+  --ifm-color-primary-darkest: #2a5e7e;
+  --ifm-color-primary-light: #66a1cb;
+  --ifm-color-primary-lighter: #7fb0d4;
+  --ifm-color-primary-lightest: #99bfdd;
+
+  --docusaurus-highlighted-code-line-bg: rgba(106, 176, 232, 0.15);
+}

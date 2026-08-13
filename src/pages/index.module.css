@@ -1,0 +1,124 @@
+/**
+ * หน้าแรก — ใช้ token จาก custom.css เท่านั้น ห้าม hardcode สี
+ */
+
+.hero {
+  padding: var(--rk-space-6) 0;
+  background: var(--rk-bg-subtle);
+  border-bottom: 1px solid var(--rk-border);
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  letter-spacing: 0.02em;
+  color: var(--rk-primary);
+  margin-bottom: var(--rk-space-2);
+}
+
+.heroTagline {
+  font-size: var(--rk-text-xl);
+  color: var(--rk-text);
+  margin-bottom: var(--rk-space-4);
+}
+
+.heroLead {
+  font-size: var(--rk-text-lg);
+  line-height: 1.85;
+  color: var(--rk-text-muted);
+  max-width: 40rem;
+  margin: 0 auto var(--rk-space-5);
+}
+
+.heroActions {
+  display: flex;
+  gap: var(--rk-space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-block;
+  padding: 0.75rem var(--rk-space-4);
+  border-radius: var(--rk-radius);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--rk-transition), color var(--rk-transition);
+}
+
+.primaryButton {
+  background: var(--rk-primary);
+  color: var(--rk-on-primary);
+  border: 2px solid var(--rk-primary);
+}
+
+.primaryButton:hover {
+  background: var(--rk-primary-dark);
+  border-color: var(--rk-primary-dark);
+  color: var(--rk-on-primary);
+  text-decoration: none;
+}
+
+.secondaryButton {
+  background: transparent;
+  color: var(--rk-primary);
+  border: 2px solid var(--rk-border);
+}
+
+.secondaryButton:hover {
+  border-color: var(--rk-primary);
+  color: var(--rk-primary);
+  text-decoration: none;
+}
+
+.principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--rk-space-4);
+  padding: var(--rk-space-6) 0;
+}
+
+.principleCard {
+  padding: var(--rk-space-4);
+  background: var(--rk-bg);
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius-lg);
+  border-top: 3px solid var(--rk-accent);
+}
+
+.principleTitle {
+  font-size: var(--rk-text-lg);
+  margin-bottom: var(--rk-space-2);
+  color: var(--rk-text);
+}
+
+.principleBody {
+  color: var(--rk-text-muted);
+  line-height: 1.85;
+  margin: 0;
+}
+
+/* 375px — ต้องไม่ล้นจอ */
+@media (max-width: 768px) {
+  .hero {
+    padding: var(--rk-space-5) var(--rk-space-3);
+  }
+
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+
+  .heroTagline {
+    font-size: var(--rk-text-lg);
+  }
+
+  .heroActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .principles {
+    padding: var(--rk-space-5) var(--rk-space-3);
+  }
+}
