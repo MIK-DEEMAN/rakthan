@@ -58,8 +58,15 @@ function useDocRefById(): Map<string, DocRef> {
         const title = version.docs?.[doc.id]?.title ?? doc.id.split('/').pop() ?? doc.id;
         const ref: DocRef = { url: doc.path, title };
         map.set(doc.id, ref);
+
         // frontmatter เขียน prerequisites เป็นชื่อสั้น เช่น how-computers-think
         // แต่ id จริงของ Docusaurus มี path นำหน้า เช่น stage-0-foundations/how-computers-think
+        //
+        // ⚠️ ไฟล์เฉลยตั้งชื่อตาม slug ของบท id จึงลงท้ายเหมือนกันเป๊ะ
+        // (appendix/solutions/how-computers-think) ถ้าเอามาใส่ตารางด้วยจะชนกัน
+        // แล้วลิงก์ "ควรเรียนมาก่อน" จะพาไปหน้าเฉลยแทนที่จะเป็นตัวบท
+        // prerequisites อ้างถึงบทเสมอ จึงข้ามทุกอย่างใต้ appendix/
+        if (doc.id.startsWith('appendix/')) continue;
         const lastSegment = doc.id.split('/').pop();
         if (lastSegment && !map.has(lastSegment)) map.set(lastSegment, ref);
       }

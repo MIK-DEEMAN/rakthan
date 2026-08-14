@@ -775,6 +775,7 @@ chunk ชื่อ `common` ขนาด ~141 KB gzip ที่ถูกโห�
 | prerequisites มีจริง + ไม่วนซ้ำ | `validate-frontmatter.mjs` |
 | ทุกบท published มีเฉลย | `validate-frontmatter.mjs` |
 | ลิงก์ภายในไม่เสีย | `onBrokenLinks: 'throw'` ของ Docusaurus |
+| **บทที่เป็น draft คอมไพล์ผ่าน** | `check-drafts.mjs` — ดูกล่องด้านล่าง |
 | ไม่มี chunk `common` ที่ทุกหน้าต้องโหลด | `check-bundle.mjs` (รันหลัง build) |
 | ไม่มีสำเนาฟอนต์ที่ถูก hash | `check-bundle.mjs` (รันหลัง build) |
 | `@font-face` ไม่อยู่ใต้ `src/` | `check-prose.mjs` |
@@ -783,6 +784,21 @@ chunk ชื่อ `common` ขนาด ~141 KB gzip ที่ถูกโห�
 | ทุกบทมี `<Callout type="misconception">` ≥ 1 | `check-prose.mjs` |
 | ไม่มีคำว่า "ง่ายมาก" / "แค่นี้เอง" / "ชัดเจนอยู่แล้ว" | `check-prose.mjs` |
 | งบคำต่อบท | `check-prose.mjs` |
+
+### ❗ `npm run build` ไม่ตรวจบทที่เป็น draft
+
+`docusaurus build` เป็นโหมด production ซึ่ง **ข้ามไฟล์ที่ `draft: true` ทั้งหมด**
+บทที่ยังเขียนไม่เสร็จจึงมี MDX ที่คอมไพล์ไม่ผ่านได้ โดย CI ยังเขียวอยู่
+กว่าจะรู้ก็ตอนเลื่อนสถานะเป็น `published` ซึ่งอาจเป็นเดือนถัดไป
+
+**เจอจริงตอนเขียนบท 0.2** — template literal ที่ขึ้นบรรทัดใหม่ที่คอลัมน์ 1
+ขณะอยู่ในรายการลำดับเลข ทำให้ MDX พัง แต่ `npm run build` ขึ้น `SUCCESS`
+
+`scripts/check-drafts.mjs` แก้ช่องโหว่นี้ด้วยการสั่ง dev server (ซึ่งคอมไพล์ draft ด้วย)
+แล้วอ่านผลการคอมไพล์ **ห้ามลบขั้นตอนนี้ออกจาก CI**
+
+กับดัก MDX ที่เจอบ่อยที่สุด: ถ้าใส่ JSX ในรายการ (`1.` `2.` `-`)
+ห้ามให้ template literal ขึ้นบรรทัดใหม่ที่คอลัมน์ 1 — ใช้ `{"...\n..."}` แทน
 
 ---
 

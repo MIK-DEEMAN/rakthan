@@ -69,15 +69,33 @@ function walk(dir, exts, out = []) {
   return out;
 }
 
-/** ตัดสิ่งที่ไม่ใช่ร้อยแก้วออก ก่อนนับคำและหาคำต้องห้าม */
+/**
+ * ตัดสิ่งที่ไม่ใช่ร้อยแก้วออก ก่อนนับคำและหาคำต้องห้าม
+ *
+ * ระวัง: การตัดแท็ก JSX ทิ้งทั้งก้อนจะกินข้อความไทยที่อยู่ใน prop ไปด้วย
+ * ซึ่งรวมถึง feedback ของ <Quiz>, alt ของ <Diagram> และ caption
+ * — ทั้งหมดนี้เป็นเนื้อหาที่ผู้เรียนอ่านจริง ไม่ใช่โค้ด
+ *
+ * ตอนวัดบท 0.2 พบว่าถูกทิ้งไป 19% ของอักขระไทยทั้งไฟล์ ทำให้บทที่เนื้อหาครบ
+ * ถูกรายงานว่าสั้นเกินไป จึงต้องดึงสตริงในเครื่องหมายคำพูดกลับมานับด้วย
+ */
 function stripNonProse(raw) {
-  return raw
+  const base = raw
     .replace(/^---\n[\s\S]*?\n---/, '')      // frontmatter
     .replace(/```[\s\S]*?```/g, '')          // code block
     .replace(/`[^`\n]*`/g, '')               // inline code
     .replace(/\{\/\*[\s\S]*?\*\/\}/g, '')    // คอมเมนต์ MDX
-    .replace(/^import .*$/gm, '')            // บรรทัด import
-    .replace(/<[^>]+>/g, ' ');               // แท็ก JSX (เก็บข้อความข้างในไว้)
+    .replace(/^import .*$/gm, '');           // บรรทัด import
+
+  // เก็บสตริงที่มีอักขระไทยอยู่ใน prop ของ JSX ไว้ก่อนตัดแท็ก
+  const propText = [];
+  for (const m of base.matchAll(/(?:"([^"\n]*)"|'([^'\n]*)')/g)) {
+    const value = m[1] ?? m[2] ?? '';
+    if (/[฀-๿]/.test(value)) propText.push(value);
+  }
+
+  const withoutTags = base.replace(/<[^>]+>/g, ' ');
+  return `${withoutTags}\n${propText.join('\n')}`;
 }
 
 /** ประมาณจำนวนคำ: อักขระไทยหารความยาวคำเฉลี่ย + จำนวนคำละติน */

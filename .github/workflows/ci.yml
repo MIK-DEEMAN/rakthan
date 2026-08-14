@@ -44,3 +44,8 @@ jobs:
       # ต้องรันหลัง build เพราะตรวจจากไฟล์ที่บิลด์ออกมา
       - name: ตรวจ bundle (ไม่มี chunk common, ไม่มีฟอนต์ซ้ำ)
         run: npm run check:bundle
+
+      # build เป็นโหมด production ซึ่งข้ามไฟล์ draft ทั้งหมด
+      # ขั้นนี้จึงจำเป็น ไม่งั้นบทที่ยังไม่เสร็จจะมี MDX พังได้โดย CI ยังเขียว
+      - name: คอมไพล์บทที่เป็น draft ด้วย
+        run: npm run check:drafts

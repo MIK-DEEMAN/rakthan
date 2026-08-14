@@ -348,6 +348,27 @@ Runner ใช้ช่องอินพุตแยก ไม่ใช่ popup
 ### เทคนิค
 - [ ] `npm run check` ผ่าน
 - [ ] `npm run build` ผ่าน
+- [ ] **`npm run check:drafts` ผ่าน** — `npm run build` ข้ามไฟล์ `draft: true` ทั้งหมด
+      บทที่ยังไม่เสร็จจึงมี MDX พังได้โดย build ไม่ฟ้อง
+
+:::warning กับดัก MDX ที่เจอบ่อยที่สุด
+
+ถ้าใส่ JSX ไว้ใน**รายการ** (`1.` `2.` `-`) ห้ามให้ template literal ขึ้นบรรทัดใหม่ที่คอลัมน์ 1
+
+```mdx
+1. โจทย์
+
+   <PythonRunner initialCode={`print(1)
+print(2)`} />        ← พัง
+```
+
+ให้เขียนเป็นสตริงบรรทัดเดียวแทน
+
+```mdx
+   <PythonRunner initialCode={"print(1)\nprint(2)"} />   ← ใช้ได้
+```
+
+:::
 - [ ] เปิดดูบนความกว้าง 375px แล้วไม่ล้น
 - [ ] ทดสอบทั้งโหมดสว่างและมืด
 

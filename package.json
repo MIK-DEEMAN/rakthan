@@ -19,6 +19,7 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:prose": "node scripts/check-prose.mjs",
     "check:bundle": "node scripts/check-bundle.mjs",
+    "check:drafts": "node scripts/check-drafts.mjs",
     "new-lesson": "node scripts/new-lesson.mjs"
   },
   "dependencies": {
