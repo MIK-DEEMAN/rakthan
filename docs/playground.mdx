@@ -4,6 +4,7 @@ description: "หน้าทดสอบ component ทุกตัวของ 
 unlisted: true
 ---
 
+import BinaryConverter from '@site/src/components/BinaryConverter';
 import Callout from '@site/src/components/Callout';
 import Diagram from '@site/src/components/Diagram';
 import PythonRunner from '@site/src/components/PythonRunner';
@@ -167,6 +168,18 @@ print(a, b)`}
   ]}
 />
 
+## `<BinaryConverter>`
+
+แก้ช่องไหนอีกสองช่องเปลี่ยนตาม กดที่บิตเพื่อสลับ 0/1 ได้ทั้งเมาส์และคีย์บอร์ด
+
+<BinaryConverter initialValue={43} />
+
+ลองพิมพ์ 300 ในช่องฐาน 10 ดู — 8 บิตเก็บไม่ได้ และตัวแปลงจะบอกว่าทำไม
+
+### 4 บิต
+
+<BinaryConverter initialValue={11} bits={4} />
+
 ## Component ที่ยังไม่ได้สร้าง
 
-`<BinaryConverter>` (Phase 3), `<LogicGate>`, `<SqlRunner>`, `<ProgressTracker>`
+`<LogicGate>`, `<SqlRunner>`, `<ProgressTracker>`
