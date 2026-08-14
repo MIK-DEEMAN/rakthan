@@ -148,10 +148,35 @@ function checkHardcodedColors() {
   return checked;
 }
 
+// ── @font-face ต้องไม่อยู่ใต้ src/ ───────────────────────────
+//
+// ถ้า @font-face อยู่ใน src/ webpack จะสร้างสำเนาไฟล์ฟอนต์ที่มี hash ขึ้นมาอีกชุด
+// ทำให้เว็บส่งฟอนต์ซ้ำสองชุด และ <link rel="preload"> ชี้คนละไฟล์กับที่ CSS เรียก
+// (เคยเกิดขึ้นจริงและถูกจับได้ตอนตรวจเว็บที่ deploy แล้ว — ดู CLAUDE.md หัวข้อ 3.2)
+
+function checkFontFaceLocation() {
+  const files = walk(SRC, ['.css']);
+  for (const full of files) {
+    const rel = relative(ROOT, full).replace(/\\/g, '/');
+    const content = readFileSync(full, 'utf8');
+    // ข้ามที่อยู่ในคอมเมนต์
+    const stripped = content.replace(/\/\*[\s\S]*?\*\//g, '');
+    if (/@font-face/.test(stripped)) {
+      err(rel,
+        '@font-face ห้ามอยู่ใต้ src/ — ต้องอยู่ที่ static/fonts/fonts.css\n' +
+        '    webpack จะ hash ชื่อไฟล์ฟอนต์ ทำให้ส่งซ้ำสองชุดและ preload ชี้ผิดไฟล์\n' +
+        '    (ดู CLAUDE.md หัวข้อ 3.2)');
+    }
+  }
+  return files.length;
+}
+
 // ── รัน ──────────────────────────────────────────────────────
 
 const lessonCount = checkLessons();
 const fileCount = checkHardcodedColors();
+const cssCount = checkFontFaceLocation();
+console.log(`ตรวจตำแหน่ง @font-face: ${cssCount} ไฟล์ CSS`);
 
 console.log(`ตรวจร้อยแก้ว: ${lessonCount} บท`);
 console.log(`ตรวจการ hardcode สี: ${fileCount} ไฟล์ใน src/`);

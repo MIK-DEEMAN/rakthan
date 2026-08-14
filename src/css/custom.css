@@ -7,58 +7,13 @@
  */
 
 /* ═══════════════════════════════════════════════════════════
-   ฟอนต์ — self-host เท่านั้น ห้ามใช้ Google Fonts CDN
-   เหตุผล 4 ข้อ อยู่ใน CLAUDE.md หัวข้อ 3.2
+   ⚠️ @font-face ไม่ได้อยู่ในไฟล์นี้ — อยู่ที่ static/fonts/fonts.css
 
-   โหลดแค่น้ำหนัก 400 กับ 600 และแยก subset ไทย/ละติน ด้วย unicode-range
-   เพื่อให้หน้าที่ไม่มีอักษรไทยไม่ต้องโหลดไฟล์ไทย
+   ห้ามย้ายกลับมา เพราะ webpack จะประมวลผล url() ของ CSS ใต้ src/
+   แล้วสร้างสำเนาฟอนต์ที่มี hash ซ้อนขึ้นมาอีกชุด ทำให้ preload
+   ใน docusaurus.config.ts ชี้ผิดไฟล์ และเว็บส่งฟอนต์ซ้ำสองชุด
+   เหตุผลเต็มอยู่ในหัวไฟล์ static/fonts/fonts.css และ CLAUDE.md หัวข้อ 3.2
    ═══════════════════════════════════════════════════════════ */
-
-@font-face {
-  font-family: 'IBM Plex Sans Thai';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/plex-sans-thai-thai-400.woff2') format('woff2');
-  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
-}
-@font-face {
-  font-family: 'IBM Plex Sans Thai';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/plex-sans-thai-latin-400.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'IBM Plex Sans Thai';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/plex-sans-thai-thai-600.woff2') format('woff2');
-  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
-}
-@font-face {
-  font-family: 'IBM Plex Sans Thai';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/plex-sans-thai-latin-600.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'IBM Plex Mono';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/plex-mono-latin-400.woff2') format('woff2');
-}
 
 /* ═══════════════════════════════════════════════════════════
    Design tokens — โหมดสว่าง

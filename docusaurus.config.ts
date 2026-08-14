@@ -68,6 +68,12 @@ const config: Config = {
   // ไฟล์ฟอนต์ของ KaTeX เองจะถูกโหลดต่อเมื่อมีสูตรคณิตบนหน้านั้นจริง ๆ
   // ดังนั้นหน้าที่ไม่มีสูตรจึงเสียแค่ CSS ~24KB (ประมาณ 7KB หลัง gzip)
   stylesheets: [
+    // @font-face ต้องมาจาก static/ ไม่ใช่ src/css/ ไม่งั้น webpack จะ hash ชื่อไฟล์ฟอนต์
+    // แล้ว preload ด้านล่างจะชี้คนละไฟล์กับที่ CSS เรียก → โหลดซ้ำสองชุด
+    {
+      href: '/fonts/fonts.css',
+      type: 'text/css',
+    },
     {
       href: '/katex/katex.min.css',
       type: 'text/css',

@@ -289,30 +289,35 @@ rakthan/
 
 ไฟล์ `.woff2` เก็บใน `static/fonts/` และ **commit ลง git** เพื่อให้บิลด์ได้แม้อีก 5 ปีข้างหน้า
 
-```css
-/* src/css/custom.css */
-@font-face {
-  font-family: 'IBM Plex Sans Thai';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-sans-thai-400.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'IBM Plex Sans Thai';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-sans-thai-600.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'IBM Plex Mono';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
-}
+#### ❗ `@font-face` ต้องอยู่ใน `static/fonts/fonts.css` ห้ามอยู่ใน `src/css/`
+
+**นี่คือ bug จริงที่เคยเกิดขึ้นแล้วและถูกจับได้ตอนตรวจเว็บที่ deploy จริง**
+
+webpack ประมวลผล `url()` ของ CSS ทุกไฟล์ที่อยู่ใต้ `src/` แล้วสร้าง**สำเนา**ไฟล์ฟอนต์ที่มี hash
+ต่อท้ายชื่อไว้ที่ `/assets/fonts/` ส่วนไฟล์ใน `static/` ถูกคัดลอกตรง ๆ ไปที่ `/fonts/`
+
+ผลที่ตามมาเมื่อ `@font-face` อยู่ใน `src/css/custom.css`:
+
+| อาการ | ผลกระทบ |
+|---|---|
+| ฟอนต์ถูกส่งขึ้นเว็บสองชุด | 146 KB แทนที่จะเป็น 73 KB |
+| CSS เรียก `/assets/fonts/...` แต่ preload ชี้ `/fonts/...` | เบราว์เซอร์โหลดทิ้งเปล่า ~29 KB ต่อการเปิดหน้าแรก |
+| preload อุ่นผิดไฟล์ | ไม่ได้ประโยชน์อะไรเลย |
+
+**วิธีที่ถูก:** ประกาศ `@font-face` ใน `static/fonts/fonts.css` แล้วโหลดผ่าน `stylesheets`
+ใน `docusaurus.config.ts` — path จะคงที่และตรงกับ `<link rel="preload">` เสมอ
+(เป็นวิธีเดียวกับที่ใช้กับ KaTeX CSS อยู่แล้ว)
+
+```ts
+// docusaurus.config.ts
+stylesheets: [
+  { href: '/fonts/fonts.css', type: 'text/css' },
+  { href: '/katex/katex.min.css', type: 'text/css' },
+],
 ```
+
+**วิธีตรวจว่ายังถูกอยู่:** หลัง `npm run build` โฟลเดอร์ `build/assets/fonts/` **ต้องไม่มี**
+ถ้ามีขึ้นมาเมื่อไหร่ แปลว่ามีคนย้าย `@font-face` กลับเข้า `src/` แล้ว
 
 **สำคัญ:** เพราะโหลดแค่ 400/600 ต้องตั้งตัวหนาเป็น 600 ด้วย ไม่งั้นเบราว์เซอร์จะสังเคราะห์ตัวหนา 700 ขึ้นมาเอง (synthetic bold) ซึ่งทำให้สระและวรรณยุกต์ไทยเละ
 
@@ -709,7 +714,8 @@ last_reviewed: 2026-08-14          # วันที่ตรวจความ�
 | JS — chunk `common` จาก mermaid | **+141 KB** | — | ⚠️ ดูด้านล่าง |
 | **JS รวมต่อหน้า** | **~305 KB** | ≤ 320 KB | ผ่าน (แต่สูง) |
 | CSS | 16 KB | ≤ 30 KB | ผ่าน |
-| ฟอนต์เนื้อหา (5 ไฟล์ woff2) | 73 KB | ≤ 150 KB | ผ่านสบาย |
+| ฟอนต์เนื้อหา — โหลดจริงต่อหน้า | 59 KB | ≤ 150 KB | ผ่านสบาย |
+| ฟอนต์เนื้อหา — ที่ส่งขึ้นเว็บทั้งหมด | 73 KB | — | 5 ไฟล์ (mono โหลดต่อเมื่อมีโค้ด) |
 | KaTeX CSS | 3 KB | — | โหลดทุกหน้า |
 | ฟอนต์ KaTeX | 253 KB | — | โหลดต่อเมื่อมีสูตรจริง |
 | Pyodide, sql.js | ไม่นับ | — | lazy load |
