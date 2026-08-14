@@ -118,7 +118,11 @@ export default function PythonRunner({
     // สร้าง worker ใหม่ทุกครั้ง เพื่อให้ตัวแปรจากการรันครั้งก่อนไม่ค้างมา
     // ทำให้ผลลัพธ์ที่ผู้เรียนเห็นตรงกับโค้ดที่อยู่ตรงหน้าเสมอ
     killWorker();
-    const worker = new Worker(new URL('./pyodide.worker.js', import.meta.url));
+    // type: 'module' จำเป็น — worker โหลด Pyodide ด้วย dynamic import
+    // เพราะ importScripts() โหลดสคริปต์ข้าม origin ไม่สำเร็จ (ดูคอมเมนต์ในไฟล์ worker)
+    const worker = new Worker(new URL('./pyodide.worker.js', import.meta.url), {
+      type: 'module',
+    });
     workerRef.current = worker;
 
     worker.onmessage = (event: MessageEvent) => {

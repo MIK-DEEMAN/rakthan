@@ -16,7 +16,7 @@
 
 // ล็อกเวอร์ชันไว้ ไม่ใช้ "latest" เพราะโปรเจกต์ต้องบิลด์ได้เหมือนเดิมอีก 5 ปี
 const PYODIDE_VERSION = '314.0.3';
-const INDEX_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
+const INDEX_URL = `https://cdn.jsdelivr.net/npm/pyodide@${PYODIDE_VERSION}/`;
 
 /** แคช instance ไว้ระดับ worker — หน้าเดียวมี runner กี่ตัวก็โหลด Pyodide ครั้งเดียว */
 let pyodidePromise = null;
@@ -30,8 +30,15 @@ async function getPyodide() {
 
   pyodidePromise = (async () => {
     post({ type: 'phase', phase: 'loading-runtime' });
+
+    // ⚠️ ห้ามใช้ importScripts() ที่นี่
+    // ทดสอบบน Chrome จริงกับเว็บที่ deploy แล้วพบว่า importScripts() โหลดสคริปต์
+    // ข้าม origin ไม่สำเร็จ ทั้งที่ fetch() ใน worker เดียวกันโหลด URL เดิมได้ปกติ
+    // (ยืนยันด้วย worker เปล่าที่ไม่มีโค้ดของโปรเจกต์นี้เลย)
+    // module worker + dynamic import ทำงานได้ จึงใช้วิธีนี้แทน
+    let loadPyodide;
     try {
-      self.importScripts(`${INDEX_URL}pyodide.js`);
+      ({ loadPyodide } = await import(/* webpackIgnore: true */ `${INDEX_URL}pyodide.mjs`));
     } catch (err) {
       // เน็ตหลุด CDN ล่ม หรือเครือข่ายของโรงเรียนบล็อก jsdelivr
       // ต้องแยกจากข้อผิดพลาดในโค้ดของผู้เรียน ไม่งั้นผู้เรียนจะนึกว่าตัวเองเขียนผิด
@@ -39,7 +46,8 @@ async function getPyodide() {
       e.rkLoadFailed = true;
       throw e;
     }
-    const py = await self.loadPyodide({ indexURL: INDEX_URL });
+
+    const py = await loadPyodide({ indexURL: INDEX_URL });
     post({ type: 'phase', phase: 'runtime-ready' });
     return py;
   })();
