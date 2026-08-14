@@ -6,6 +6,7 @@ unlisted: true
 
 import Callout from '@site/src/components/Callout';
 import Diagram from '@site/src/components/Diagram';
+import PythonRunner from '@site/src/components/PythonRunner';
 
 # Playground
 
@@ -92,6 +93,55 @@ import Diagram from '@site/src/components/Diagram';
     P->>P: ทำงานต่อ`}
 />
 
+## `<PythonRunner>`
+
+Pyodide โหลดตอนกด "รัน" ครั้งแรกเท่านั้น ครั้งแรกจะช้าหน่อย ครั้งต่อไปเร็ว
+
+### พื้นฐาน
+
+<PythonRunner initialCode={`print("สวัสดี Rakthan")
+print(bin(43))`} />
+
+### `input()` อ่านจากช่องอินพุต
+
+ไม่ใช้ popup และไม่ใช้ SharedArrayBuffer — กรอกไว้ล่วงหน้าหนึ่งบรรทัดต่อการเรียกหนึ่งครั้ง
+
+<PythonRunner
+  initialCode={`name = input("ชื่อ: ")
+age = input("อายุ: ")
+print(f"สวัสดี {name} อายุ {age} ปี")`}
+  stdin={'สมชาย\n17'}
+/>
+
+### ตรวจคำตอบเองได้ด้วย `expectedOutput`
+
+<PythonRunner
+  initialCode={`# แก้ให้พิมพ์เลข 43 ในฐานสอง
+print(???)`}
+  expectedOutput="0b101011"
+/>
+
+### อินพุตไม่พอ — ต้องได้ EOFError ที่อ่านรู้เรื่อง
+
+<PythonRunner
+  initialCode={`a = input()
+b = input()
+print(a, b)`}
+  stdin={'มีบรรทัดเดียว'}
+/>
+
+### ลูปไม่รู้จบ — ต้องโดนหยุดที่ 3 วินาที ไม่ใช่ค้างทั้งหน้า
+
+<PythonRunner
+  initialCode={`while True:
+    pass`}
+  timeout={3000}
+/>
+
+### โค้ดที่แก้ไม่ได้
+
+<PythonRunner initialCode={`print(2 ** 10)`} editable={false} />
+
 ## Component ที่ยังไม่ได้สร้าง
 
-Phase 2 จะเพิ่มที่นี่ทีละตัว — `<Callout>`, `<PythonRunner>`, `<Quiz>`, `<TrackBadge>`
+Phase 2 เหลือ `<Quiz>` และ `<TrackBadge>`

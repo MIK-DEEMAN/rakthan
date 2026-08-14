@@ -1,0 +1,264 @@
+/**
+ * <PythonRunner> — ใช้ token จาก custom.css เท่านั้น ห้าม hardcode สี (CI ตรวจ)
+ *
+ * หมายเหตุเรื่องสี: ส่วนที่ต้องใช้สีแดง/เขียวบอกสถานะ ใช้คู่สีของ callout ที่
+ * ผ่าน check-contrast.mjs มาแล้ว (เช่น warning-bg คู่กับ warning-icon = 4.55:1)
+ * แทนที่จะสร้าง token ใหม่ที่ยังไม่ได้ตรวจ
+ */
+
+.runner {
+  margin: var(--rk-space-5) 0;
+  padding: var(--rk-space-3);
+  background: var(--rk-bg-subtle);
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius-lg);
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--rk-space-1);
+  font-weight: 600;
+  font-size: var(--rk-text-sm);
+  color: var(--rk-text-muted);
+}
+
+.code,
+.stdin {
+  display: block;
+  width: 100%;
+  padding: var(--rk-space-2);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.95rem;
+  /* โค้ดไม่ใช่เนื้อหาไทย จึงใช้ line-height ต่ำกว่า 1.75 ได้ */
+  line-height: 1.6;
+  color: var(--rk-text);
+  background: var(--rk-bg-code);
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius);
+  resize: vertical;
+  tab-size: 4;
+}
+
+.stdin {
+  font-size: 0.95rem;
+}
+
+.hint {
+  margin: var(--rk-space-1) 0 var(--rk-space-3);
+  font-size: var(--rk-text-sm);
+  line-height: 1.7;
+  color: var(--rk-text-muted);
+}
+
+.codeStatic {
+  margin: 0 0 var(--rk-space-2);
+  background: var(--rk-bg-code);
+  border-radius: var(--rk-radius);
+}
+
+.fallbackNote {
+  margin: 0;
+  font-size: var(--rk-text-sm);
+  line-height: 1.8;
+  color: var(--rk-text-muted);
+}
+
+/* ── ปุ่ม ──────────────────────────────────────────────────── */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rk-space-2);
+  margin-top: var(--rk-space-3);
+}
+
+.button,
+.runButton {
+  padding: 0.5rem var(--rk-space-3);
+  font-family: inherit;
+  font-size: var(--rk-text-base);
+  font-weight: 600;
+  border-radius: var(--rk-radius);
+  border: 1px solid var(--rk-border);
+  background: var(--rk-bg);
+  color: var(--rk-text);
+  cursor: pointer;
+  transition: background var(--rk-transition), border-color var(--rk-transition);
+}
+
+.runButton {
+  background: var(--rk-primary);
+  border-color: var(--rk-primary);
+  color: var(--rk-on-primary);
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--rk-primary);
+}
+
+.runButton:hover:not(:disabled) {
+  background: var(--rk-primary-dark);
+  border-color: var(--rk-primary-dark);
+}
+
+.button:disabled,
+.runButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rk-space-2);
+  font-size: var(--rk-text-sm);
+  color: var(--rk-text-muted);
+}
+
+.spinner {
+  width: 0.9em;
+  height: 0.9em;
+  border: 2px solid var(--rk-border);
+  border-top-color: var(--rk-primary);
+  border-radius: 50%;
+  animation: rk-spin 700ms linear infinite;
+}
+
+@keyframes rk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* prefers-reduced-motion ถูกปิดรวมที่ thai-typography.css อยู่แล้ว
+   แต่ spinner ที่หยุดหมุนต้องยังบอกได้ว่ากำลังทำงาน จึงใส่เส้นขอบเต็มวงแทน */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    border-top-color: var(--rk-primary);
+    border-right-color: var(--rk-primary);
+  }
+}
+
+/* ── ผลลัพธ์ ───────────────────────────────────────────────── */
+
+.output {
+  margin-top: var(--rk-space-3);
+}
+
+.outputLabel {
+  margin: var(--rk-space-2) 0 var(--rk-space-1);
+  font-size: var(--rk-text-sm);
+  font-weight: 600;
+  color: var(--rk-text-muted);
+}
+
+.errorLabel {
+  color: var(--rk-cal-warning-icon);
+}
+
+.stdout,
+.stderr,
+.log {
+  margin: 0;
+  padding: var(--rk-space-2);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-radius: var(--rk-radius);
+}
+
+.stdout,
+.log {
+  background: var(--rk-bg-code);
+  color: var(--rk-text);
+}
+
+/* stderr ต้องแยกจาก stdout ด้วยตาเปล่า และไม่ใช้สีอย่างเดียว
+   จึงมีทั้งพื้นหลังต่างกัน หัวเรื่อง "ข้อผิดพลาด" และเส้นขอบซ้าย */
+.stderr {
+  background: var(--rk-cal-warning-bg);
+  color: var(--rk-cal-warning-icon);
+  border-left: 4px solid var(--rk-cal-warning-border);
+}
+
+.log {
+  margin-top: var(--rk-space-2);
+  font-size: var(--rk-text-sm);
+  color: var(--rk-text-muted);
+}
+
+.empty,
+.stopped {
+  margin: var(--rk-space-2) 0 0;
+  font-size: var(--rk-text-sm);
+  color: var(--rk-text-muted);
+}
+
+.timeout {
+  margin: 0 0 var(--rk-space-2);
+  padding: var(--rk-space-2) var(--rk-space-3);
+  font-size: var(--rk-text-base);
+  line-height: 1.8;
+  background: var(--rk-cal-misconception-bg);
+  color: var(--rk-text);
+  border-left: 4px solid var(--rk-cal-misconception-border);
+  border-radius: var(--rk-radius);
+}
+
+/* โหลด Pyodide ไม่สำเร็จ — ต้องแยกจากข้อผิดพลาดในโค้ดของผู้เรียนให้ชัด
+   ไม่งั้นผู้เรียนจะนึกว่าตัวเองเขียนผิดแล้วเสียเวลาหาบั๊กที่ไม่มีอยู่ */
+.loadFailed {
+  margin: 0;
+  padding: var(--rk-space-3);
+  background: var(--rk-cal-note-bg);
+  border-left: 4px solid var(--rk-cal-note-border);
+  border-radius: var(--rk-radius);
+  color: var(--rk-text);
+  line-height: 1.85;
+}
+
+.loadFailed p {
+  margin: 0 0 var(--rk-space-2);
+}
+
+.loadFailed p:last-child {
+  margin-bottom: 0;
+}
+
+.loadFailedTitle {
+  font-weight: 600;
+  color: var(--rk-cal-note-icon);
+}
+
+/* ผลการเทียบกับ expectedOutput — มีทั้งไอคอนและสี ห้ามใช้สีอย่างเดียว */
+.pass,
+.fail {
+  margin: var(--rk-space-2) 0 0;
+  padding: var(--rk-space-2);
+  font-size: var(--rk-text-base);
+  font-weight: 600;
+  border-radius: var(--rk-radius);
+}
+
+.pass {
+  background: var(--rk-cal-tip-bg);
+  color: var(--rk-cal-tip-icon);
+}
+
+.fail {
+  background: var(--rk-cal-warning-bg);
+  color: var(--rk-cal-warning-icon);
+}
+
+@media (max-width: 768px) {
+  .runner {
+    padding: var(--rk-space-2);
+  }
+
+  .actions {
+    gap: var(--rk-space-1);
+  }
+}
