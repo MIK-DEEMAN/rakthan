@@ -51,7 +51,7 @@
 | ฟอนต์ | **IBM Plex Sans Thai + IBM Plex Mono — self-host** | ดูหัวข้อ 3.2 ห้ามใช้ Google Fonts CDN |
 | Python runner | **Pyodide** (โหลดจาก CDN, lazy load) | รัน Python จริงในเบราว์เซอร์ |
 | SQL runner | **sql.js** | SQLite บน WASM สำหรับบทฐานข้อมูล |
-| ไดอะแกรม | **Mermaid** (built-in) + **SVG เขียนเอง** | Mermaid สำหรับ flowchart, SVG สำหรับวงจร/สถาปัตยกรรม |
+| ไดอะแกรม | **Mermaid ผ่าน `<Diagram>`** + **SVG เขียนเอง** | Mermaid สำหรับ flowchart, SVG สำหรับวงจร/สถาปัตยกรรม — **ห้ามใช้ `@docusaurus/theme-mermaid`** ดูหัวข้อ 9 |
 | สูตรคณิต | **KaTeX** (remark-math + rehype-katex) | เร็วกว่า MathJax |
 | Search | ⚠️ **ยังไม่ตัดสินใจ — ต้องทำ spike ก่อน** | ดูหัวข้อ 1.1 |
 | สไลด์ | ⏸️ **Marp — เลื่อนออกไปหลัง Phase 3** | ดูหัวข้อ 1.2 |
@@ -710,34 +710,41 @@ last_reviewed: 2026-08-14          # วันที่ตรวจความ�
 
 | ก้อน | วัดได้จริง (gzip) | งบ | สถานะ |
 |---|---|---|---|
-| JS — Docusaurus baseline | 163 KB | — | พื้นฐานที่ตัดไม่ได้ |
-| JS — chunk `common` จาก mermaid | **+141 KB** | — | ⚠️ ดูด้านล่าง |
-| **JS รวมต่อหน้า** | **~305 KB** | ≤ 320 KB | ผ่าน (แต่สูง) |
-| CSS | 16 KB | ≤ 30 KB | ผ่าน |
+| **JS — หน้าที่ไม่มีไดอะแกรม** | **164 KB** | ≤ 200 KB | ผ่าน |
+| JS — หน้าที่มีไดอะแกรม (บวก mermaid) | ~305 KB | — | จ่ายเฉพาะหน้าที่ใช้ |
+| CSS | 15 KB | ≤ 30 KB | ผ่าน |
 | ฟอนต์เนื้อหา — โหลดจริงต่อหน้า | 59 KB | ≤ 150 KB | ผ่านสบาย |
 | ฟอนต์เนื้อหา — ที่ส่งขึ้นเว็บทั้งหมด | 73 KB | — | 5 ไฟล์ (mono โหลดต่อเมื่อมีโค้ด) |
 | KaTeX CSS | 3 KB | — | โหลดทุกหน้า |
 | ฟอนต์ KaTeX | 253 KB | — | โหลดต่อเมื่อมีสูตรจริง |
 | Pyodide, sql.js | ไม่นับ | — | lazy load |
 
-### 🔴 ประเด็นที่ยังไม่ตัดสินใจ — ต้นทุนของ Mermaid
+### ✅ ต้นทุนของ Mermaid — แก้แล้ว (2026-08-14)
 
-**การวัดเทียบ:** บิลด์แบบมีและไม่มี `@docusaurus/theme-mermaid` แล้วเทียบขนาด
+**ปัญหาเดิม:** `@docusaurus/theme-mermaid` ลงทะเบียนตัวจัดการ code block ระดับ global
+ทำให้ทุกหน้าอ้างถึงมัน webpack จึงยก dependency ร่วมของ mermaid (d3 และอื่น ๆ) ออกมาเป็น
+chunk ชื่อ `common` ขนาด ~141 KB gzip ที่ถูกโหลด **ทุกหน้า** แม้หน้าที่ไม่มีไดอะแกรมสักอัน
 
-theme-mermaid ทำให้ webpack ยก dependency ร่วม (d3 และอื่น ๆ) ออกมาเป็น chunk ชื่อ `common`
-ขนาด ~141 KB gzip ซึ่งถูกโหลด **ทุกหน้า** — รวมหน้าที่ไม่มีไดอะแกรมสักอัน
-(ตัว mermaid เองยัง lazy load อยู่ ปัญหาคือ dependency ที่ถูกยกออกมา)
+**สิ่งที่ทดลองแล้วไม่ได้ผล:** เปลี่ยนไปเขียน component ที่ `await import('mermaid')` เอง
+— ยังเกิด chunk `common` เหมือนเดิม เพราะต้นเหตุอยู่ที่กติกาการจัดกลุ่ม chunk ของ webpack
+ไม่ใช่วิธี import
 
-พูดง่าย ๆ: **หน้าที่ไม่มีไดอะแกรมเลย ต้องจ่ายค่า mermaid เต็ม ๆ**
+**สิ่งที่ได้ผล — ใช้สองอย่างคู่กัน:**
 
-| ทางเลือก | JS ต่อหน้า | แลกกับ |
+1. ตัด `@docusaurus/theme-mermaid` ออก ใช้ `<Diagram>` (`src/components/Diagram/`) ที่ import
+   mermaid แบบ dynamic จากที่เดียวแทน
+2. เขียน plugin `rk-bundle-tuning` ใน `docusaurus.config.ts` กัน mermaid, d3 และเพื่อน
+   ออกจาก cacheGroup ชื่อ `common` ของ Docusaurus
+
+ผลที่วัดได้:
+
+| | หน้าที่ไม่มีไดอะแกรม | หน้าที่มีไดอะแกรม |
 |---|---|---|
-| เก็บ mermaid ไว้ (ตอนนี้เป็นแบบนี้) | ~305 KB | ทุกหน้าจ่ายค่า chunk ที่ไม่ได้ใช้ |
-| ตัด mermaid ใช้ SVG เขียนเองทั้งหมด | ~163 KB | เขียน flowchart ยากขึ้นมาก |
-| เก็บ mermaid แต่แยกเป็นไซต์/route ย่อย | ~163 KB ส่วนใหญ่ | ซับซ้อนขึ้น ต้องทดลองก่อน |
+| ก่อนแก้ | 305 KB | 305 KB |
+| หลังแก้ | **164 KB** | ~305 KB |
 
-🔴 **ต้องให้เจ้าของโปรเจกต์ตัดสินใจ** — `CONTRIBUTING.md` หัวข้อ 5 บังคับให้มีไดอะแกรมในหลายกรณี
-ถ้าตัด mermaid ต้องแก้กติกานั้นด้วย
+**ห้ามเอา `@docusaurus/theme-mermaid` กลับมา** และห้ามลบ plugin `rk-bundle-tuning`
+**วิธีตรวจว่ายังถูกอยู่:** หลัง build ต้องไม่มีไฟล์ `build/assets/js/common.*.js`
 
 ### กติกาอื่น
 - Lighthouse Performance ≥ 90 บนมือถือ — **ยังไม่ได้วัด** ต้องวัดหลัง deploy จริง
@@ -756,6 +763,9 @@ theme-mermaid ทำให้ webpack ยก dependency ร่วม (d3 แล�
 | prerequisites มีจริง + ไม่วนซ้ำ | `validate-frontmatter.mjs` |
 | ทุกบท published มีเฉลย | `validate-frontmatter.mjs` |
 | ลิงก์ภายในไม่เสีย | `onBrokenLinks: 'throw'` ของ Docusaurus |
+| ไม่มี chunk `common` ที่ทุกหน้าต้องโหลด | `check-bundle.mjs` (รันหลัง build) |
+| ไม่มีสำเนาฟอนต์ที่ถูก hash | `check-bundle.mjs` (รันหลัง build) |
+| `@font-face` ไม่อยู่ใต้ `src/` | `check-prose.mjs` |
 | contrast ≥ 4.5:1 ทั้งสองโหมด | `check-contrast.mjs` |
 | ไม่ hardcode สีนอก custom.css | `check-prose.mjs` |
 | ทุกบทมี `<Callout type="misconception">` ≥ 1 | `check-prose.mjs` |

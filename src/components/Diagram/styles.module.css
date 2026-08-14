@@ -1,0 +1,54 @@
+/**
+ * <Diagram> — ใช้ token จาก custom.css เท่านั้น ห้าม hardcode สี
+ */
+
+.figure {
+  margin: var(--rk-space-5) 0;
+}
+
+/* ไดอะแกรมที่กว้างเกินจอต้องเลื่อนในกล่องตัวเอง
+   ห้ามดันทั้งหน้าให้เลื่อนแนวนอน (ตรวจที่ 375px ทุกครั้ง) */
+.scroller {
+  overflow-x: auto;
+  padding: var(--rk-space-3);
+  background: var(--rk-bg-subtle);
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius-lg);
+}
+
+.diagram {
+  display: flex;
+  justify-content: center;
+  min-width: min-content;
+}
+
+.diagram[data-state='loading'] {
+  min-height: 4rem;
+}
+
+.diagram :global(svg) {
+  max-width: 100%;
+  height: auto;
+}
+
+.loading {
+  margin: 0;
+  text-align: center;
+  color: var(--rk-text-muted);
+  font-size: var(--rk-text-sm);
+}
+
+/* แสดงตอน JS ยังไม่ทำงาน หรือเรนเดอร์ไม่สำเร็จ — ผู้เรียนยังอ่านโครงสร้างได้ */
+.fallback {
+  margin: 0;
+  background: var(--rk-bg-code);
+  border-radius: var(--rk-radius);
+}
+
+.caption {
+  margin-top: var(--rk-space-2);
+  text-align: center;
+  color: var(--rk-text-muted);
+  font-size: var(--rk-text-sm);
+  line-height: 1.7;
+}

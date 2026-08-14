@@ -33,16 +33,44 @@ const config: Config = {
   },
 
   markdown: {
-    mermaid: true,
     hooks: {
       onBrokenMarkdownLinks: 'throw',
     },
   },
-  // ⚠️ ต้นทุนที่วัดได้จริง: theme-mermaid ทำให้เกิด chunk ชื่อ "common" ขนาด ~141KB (gzip)
-  //    ที่ถูกโหลด **ทุกหน้า** แม้หน้านั้นไม่มีไดอะแกรมเลย
-  //    หน้าหนึ่งจึงโหลด JS ~305KB แทนที่จะเป็น ~163KB
-  //    ดู CLAUDE.md หัวข้อ 9 — เป็นประเด็นที่ยังต้องตัดสินใจ
-  themes: ['@docusaurus/theme-mermaid'],
+  // ไม่ใช้ @docusaurus/theme-mermaid — วัดแล้วพบว่ามันสร้าง chunk ชื่อ "common"
+  // ขนาด ~141KB (gzip) ที่ทุกหน้าต้องโหลด แม้หน้านั้นไม่มีไดอะแกรมเลย
+  // ใช้ <Diagram> ใน src/components/Diagram แทน ซึ่งโหลด mermaid เฉพาะหน้าที่ใช้จริง
+  // ดู CLAUDE.md หัวข้อ 9
+
+  plugins: [
+    // Docusaurus ตั้ง cacheGroup ชื่อ "common" ให้ยกโมดูลที่ถูกใช้ร่วมกันหลาย chunk
+    // ออกมาเป็นก้อนเดียว ผลคือ dependency ภายในของ mermaid ถูกยกออกมาด้วย
+    // แล้วกลายเป็นก้อน ~141KB (gzip) ที่ทุกหน้าต้องโหลด แม้ไม่มีไดอะแกรม
+    // ตรงนี้กัน mermaid และเพื่อนออกจาก cacheGroup นั้น ให้อยู่ใน chunk ของตัวเอง
+    function bundleTuning() {
+      return {
+        name: 'rk-bundle-tuning',
+        configureWebpack(_config: unknown, isServer: boolean) {
+          if (isServer) return {};
+          const HEAVY = /[\\/]node_modules[\\/](mermaid|@mermaid-js|d3|d3-[^\\/]+|cytoscape|dagre[^\\/]*|khroma|langium|roughjs|katex)[\\/]/;
+          return {
+            optimization: {
+              splitChunks: {
+                cacheGroups: {
+                  common: {
+                    // รับเป็น unknown แล้วแคสต์ เพราะ type ของ webpack.Module
+                    // ไม่ได้ประกาศ resource ไว้ใน type ที่ Docusaurus ส่งออกมา
+                    test: (mod: unknown) =>
+                      !HEAVY.test((mod as { resource?: string } | null)?.resource ?? ''),
+                  },
+                },
+              },
+            },
+          };
+        },
+      };
+    },
+  ],
 
   presets: [
     [

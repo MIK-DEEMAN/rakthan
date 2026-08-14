@@ -40,7 +40,8 @@ npm start
 |---|---|
 | frontmatter ครบ, prerequisites มีจริง, ไม่มีวงจรวน, บทที่ published มีเฉลย | `scripts/validate-frontmatter.mjs` |
 | คอนทราสต์ทุกคู่สี ≥ WCAG AA ทั้งโหมดสว่างและมืด | `scripts/check-contrast.mjs` |
-| คำต้องห้าม, ต้องมี misconception callout, งบคำ, ห้าม hardcode สี | `scripts/check-prose.mjs` |
+| คำต้องห้าม, ต้องมี misconception callout, งบคำ, ห้าม hardcode สี, `@font-face` ไม่อยู่ใต้ `src/` | `scripts/check-prose.mjs` |
+| ไม่มี chunk `common` ที่ทุกหน้าต้องโหลด, ไม่มีฟอนต์ซ้ำ | `scripts/check-bundle.mjs` (หลัง build) |
 | ลิงก์ภายในไม่เสีย | `onBrokenLinks: 'throw'` ของ Docusaurus |
 
 ## สถานะ

@@ -1,0 +1,54 @@
+---
+title: "Playground — ทดสอบ component"
+description: "หน้าทดสอบ component ทุกตัวของ Rakthan ไม่ใช่เนื้อหาบทเรียน"
+unlisted: true
+---
+
+import Diagram from '@site/src/components/Diagram';
+
+# Playground
+
+หน้านี้ใช้ทดสอบ component ทุกตัวก่อนเอาไปใช้ในบทเรียนจริง
+ไม่อยู่ในสารบัญและไม่ถูกเครื่องมือค้นหาเก็บข้อมูล
+
+:::warning ไม่ใช่เนื้อหาบทเรียน
+
+ถ้าคุณมาถึงหน้านี้จากการค้นหา ให้กลับไปที่ [หน้าเริ่มต้น](/docs/intro)
+
+:::
+
+## `<Diagram>`
+
+โหลด Mermaid เฉพาะหน้าที่มีไดอะแกรมจริง หน้าที่ไม่มีจะไม่ต้องจ่ายอะไรเลย
+
+### Flowchart
+
+<Diagram
+  alt="ผังงานของคำสั่ง if-else เริ่มจากกล่องเริ่มต้น ไปยังคำถามว่าอายุถึง 18 ปีหรือยัง ถ้าใช่ไปที่กล่องเข้าได้ ถ้าไม่ใช่ไปที่กล่องเข้าไม่ได้ แล้วทั้งสองทางมารวมกันที่กล่องจบ"
+  caption="ผังงานของ if-else ที่จะใช้ในบท 0.6"
+  chart={`flowchart TD
+    A([เริ่ม]) --> B{อายุ >= 18?}
+    B -->|ใช่| C[เข้าได้]
+    B -->|ไม่ใช่| D[เข้าไม่ได้]
+    C --> E([จบ])
+    D --> E`}
+/>
+
+### Sequence diagram
+
+<Diagram
+  alt="แผนภาพลำดับแสดงการทำงานของ input ผู้เรียนพิมพ์ข้อความลงช่องอินพุตก่อน จากนั้นโปรแกรมเรียก input แล้วอ่านค่าจาก buffer ทีละบรรทัด และคืนค่ากลับไปให้โปรแกรม"
+  caption="วิธีที่ PythonRunner จัดการ input() โดยไม่ใช้ SharedArrayBuffer"
+  chart={`sequenceDiagram
+    participant U as ผู้เรียน
+    participant B as ช่องอินพุต
+    participant P as โปรแกรม Python
+    U->>B: พิมพ์ข้อความไว้ล่วงหน้า
+    P->>B: เรียก input()
+    B-->>P: คืนค่าทีละบรรทัด
+    P->>P: ทำงานต่อ`}
+/>
+
+## Component ที่ยังไม่ได้สร้าง
+
+Phase 2 จะเพิ่มที่นี่ทีละตัว — `<Callout>`, `<PythonRunner>`, `<Quiz>`, `<TrackBadge>`

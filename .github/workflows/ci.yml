@@ -40,3 +40,7 @@ jobs:
       # onBrokenLinks: 'throw' ทำให้ลิงก์ภายในที่เสียทำให้ build พังตรงนี้
       - name: บิลด์
         run: npm run build
+
+      # ต้องรันหลัง build เพราะตรวจจากไฟล์ที่บิลด์ออกมา
+      - name: ตรวจ bundle (ไม่มี chunk common, ไม่มีฟอนต์ซ้ำ)
+        run: npm run check:bundle
