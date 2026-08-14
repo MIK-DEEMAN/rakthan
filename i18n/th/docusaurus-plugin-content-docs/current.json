@@ -1,0 +1,54 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.courseSidebar.category.Stage 1 — ปี 1": {
+    "message": "Stage 1 — ปี 1",
+    "description": "The label for category 'Stage 1 — ปี 1' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.Stage 1 — ปี 1.link.generated-index.description": {
+    "message": "คณิตศาสตร์ ภาษา C ลอจิกดิจิทัล และเครื่องมือของวิศวกร",
+    "description": "The generated-index page description for category 'Stage 1 — ปี 1' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.Stage 2 — ปี 2": {
+    "message": "Stage 2 — ปี 2",
+    "description": "The label for category 'Stage 2 — ปี 2' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.Stage 2 — ปี 2.link.generated-index.description": {
+    "message": "โครงสร้างข้อมูล สถาปัตยกรรมคอมพิวเตอร์ ฐานข้อมูล และเครือข่าย",
+    "description": "The generated-index page description for category 'Stage 2 — ปี 2' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.Stage 3 — ปี 3": {
+    "message": "Stage 3 — ปี 3",
+    "description": "The label for category 'Stage 3 — ปี 3' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.Stage 3 — ปี 3.link.generated-index.description": {
+    "message": "ระบบปฏิบัติการ ระบบฝังตัว การพัฒนาเว็บ และ machine learning",
+    "description": "The generated-index page description for category 'Stage 3 — ปี 3' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.Stage 4 — ปี 4": {
+    "message": "Stage 4 — ปี 4",
+    "description": "The label for category 'Stage 4 — ปี 4' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.Stage 4 — ปี 4.link.generated-index.description": {
+    "message": "ระบบกระจาย deep learning และการเตรียมตัวทำงาน",
+    "description": "The generated-index page description for category 'Stage 4 — ปี 4' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.ภาคผนวก": {
+    "message": "ภาคผนวก",
+    "description": "The label for category 'ภาคผนวก' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.ภาคผนวก.link.generated-index.description": {
+    "message": "อภิธานศัพท์และเฉลยแบบฝึกหัด",
+    "description": "The generated-index page description for category 'ภาคผนวก' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.เฉลยแบบฝึกหัด": {
+    "message": "เฉลยแบบฝึกหัด",
+    "description": "The label for category 'เฉลยแบบฝึกหัด' in sidebar 'courseSidebar'"
+  },
+  "sidebar.courseSidebar.category.เฉลยแบบฝึกหัด.link.generated-index.description": {
+    "message": "ลองทำเองให้สุดก่อนเปิดดู — การติดแล้วคิดต่อคือส่วนที่ทำให้จำได้",
+    "description": "The generated-index page description for category 'เฉลยแบบฝึกหัด' in sidebar 'courseSidebar'"
+  }
+}

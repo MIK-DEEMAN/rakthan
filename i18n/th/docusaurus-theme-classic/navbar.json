@@ -1,0 +1,22 @@
+{
+  "title": {
+    "message": "RAKTHAN",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "โลโก้ Rakthan",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.บทเรียน": {
+    "message": "บทเรียน",
+    "description": "Navbar item with label บทเรียน"
+  },
+  "item.label.แผนการเรียน": {
+    "message": "แผนการเรียน",
+    "description": "Navbar item with label แผนการเรียน"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

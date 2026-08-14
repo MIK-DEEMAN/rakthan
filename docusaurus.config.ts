@@ -24,7 +24,6 @@ const config: Config = {
 
   // ลิงก์ภายในที่เสียต้องทำให้ build พัง — ไม่ต้องใช้ link checker แยกสำหรับลิงก์ภายใน
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
   onBrokenAnchors: 'throw',
 
   // lang="th" มาจากตรงนี้ และเบราว์เซอร์ต้องใช้มันเพื่อตัดบรรทัดภาษาไทย
@@ -36,7 +35,14 @@ const config: Config = {
 
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'throw',
+    },
   },
+  // ⚠️ ต้นทุนที่วัดได้จริง: theme-mermaid ทำให้เกิด chunk ชื่อ "common" ขนาด ~141KB (gzip)
+  //    ที่ถูกโหลด **ทุกหน้า** แม้หน้านั้นไม่มีไดอะแกรมเลย
+  //    หน้าหนึ่งจึงโหลด JS ~305KB แทนที่จะเป็น ~163KB
+  //    ดู CLAUDE.md หัวข้อ 9 — เป็นประเด็นที่ยังต้องตัดสินใจ
   themes: ['@docusaurus/theme-mermaid'],
 
   presets: [
