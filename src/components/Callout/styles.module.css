@@ -1,0 +1,150 @@
+/**
+ * <Callout> — ใช้ token จาก custom.css เท่านั้น ห้าม hardcode สี (CI ตรวจ)
+ *
+ * แต่ละ type อ่านสีจาก 3 ตัวแปร:
+ *   --rk-cal-{type}-bg      พื้นกล่อง
+ *   --rk-cal-{type}-border  เส้นขอบ (≥3:1 เทียบพื้นกล่อง)
+ *   --rk-cal-{type}-icon    ไอคอนและหัวเรื่อง (≥4.5:1 เทียบพื้นกล่อง)
+ */
+
+.callout {
+  margin: var(--rk-space-4) 0;
+  padding: var(--rk-space-3) var(--rk-space-4);
+  background: var(--callout-bg);
+  border: 1px solid var(--callout-border);
+  border-left: 4px solid var(--callout-border);
+  border-radius: var(--rk-radius);
+}
+
+.header,
+.summaryInner {
+  display: flex;
+  align-items: center;
+  gap: var(--rk-space-2);
+  margin: 0;
+  color: var(--callout-icon);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  /* จัดไอคอนให้ตรงกลางบรรทัดแรกของหัวเรื่องภาษาไทย
+     ซึ่งสูงกว่าปกติเพราะสระบน */
+  align-items: center;
+  height: 1.5em;
+}
+
+.title {
+  font-weight: 600;
+  /* ห้ามใช้ --rk-text-sm กับหัวเรื่อง เพราะเป็นเนื้อหา ไม่ใช่ข้อมูลกำกับ */
+  font-size: var(--rk-text-base);
+  line-height: 1.5;
+}
+
+.body {
+  margin-top: var(--rk-space-2);
+  color: var(--rk-text);
+  /* เนื้อหาไทยห้ามต่ำกว่า 1.75 */
+  line-height: 1.85;
+}
+
+.body > :last-child {
+  margin-bottom: 0;
+}
+
+.body > :first-child {
+  margin-top: 0;
+}
+
+/* ── deepdive: พับเก็บได้ด้วย <details> ของ HTML ───────────── */
+
+.details {
+  margin: 0;
+}
+
+/* ⚠️ ห้ามตั้ง display เป็นค่าอื่นที่ <summary> โดยตรง — ปล่อยให้เป็น list-item ตามค่าเริ่มต้น
+   แล้วห่อ flex container (.summaryInner) ไว้ข้างในแทน
+
+   เหตุผล: Chromium เคยมีปัญหาว่าการเปลี่ยน display ของ <summary> ทำให้ disclosure
+   ทำงานผิดปกติ นี่เป็นการเลี่ยงไว้ก่อนตามแนวปฏิบัติที่ปลอดภัยกว่า
+   ไม่ได้มาจากการทดสอบในโปรเจกต์นี้ — เบราว์เซอร์ที่ใช้ตรวจอัตโนมัติไม่รองรับ
+   พฤติกรรมของ <details> จึงยืนยันเองไม่ได้ ต้องลองในเบราว์เซอร์จริง */
+.summary {
+  cursor: pointer;
+  /* ซ่อนสามเหลี่ยมเริ่มต้นของเบราว์เซอร์ แล้ววาดเองด้านล่าง
+     เพื่อให้ตำแหน่งตรงกับไอคอนของ type อื่น */
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+/* ลูกศรบอกสถานะพับ/กาง — วางท้ายบรรทัด */
+.summaryInner::after {
+  content: '';
+  margin-left: auto;
+  width: 0.5em;
+  height: 0.5em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transform-origin: center;
+  transition: transform var(--rk-transition);
+}
+
+.details[open] > .summary .summaryInner::after {
+  transform: rotate(-135deg);
+}
+
+/* focus ring ต้องเห็นชัดตอนเดินด้วยคีย์บอร์ด */
+.summary:focus-visible {
+  outline: var(--rk-focus-width) solid var(--rk-focus);
+  outline-offset: var(--rk-focus-offset);
+  border-radius: 2px;
+}
+
+/* ── สีประจำแต่ละ type ─────────────────────────────────────── */
+
+.misconception {
+  --callout-bg: var(--rk-cal-misconception-bg);
+  --callout-border: var(--rk-cal-misconception-border);
+  --callout-icon: var(--rk-cal-misconception-icon);
+}
+
+.note {
+  --callout-bg: var(--rk-cal-note-bg);
+  --callout-border: var(--rk-cal-note-border);
+  --callout-icon: var(--rk-cal-note-icon);
+}
+
+.tip {
+  --callout-bg: var(--rk-cal-tip-bg);
+  --callout-border: var(--rk-cal-tip-border);
+  --callout-icon: var(--rk-cal-tip-icon);
+}
+
+.warning {
+  --callout-bg: var(--rk-cal-warning-bg);
+  --callout-border: var(--rk-cal-warning-border);
+  --callout-icon: var(--rk-cal-warning-icon);
+}
+
+.history {
+  --callout-bg: var(--rk-cal-history-bg);
+  --callout-border: var(--rk-cal-history-border);
+  --callout-icon: var(--rk-cal-history-icon);
+}
+
+.deepdive {
+  --callout-bg: var(--rk-cal-deepdive-bg);
+  --callout-border: var(--rk-cal-deepdive-border);
+  --callout-icon: var(--rk-cal-deepdive-icon);
+}
+
+/* มือถือ — ลด padding แนวนอนไม่ให้เบียดจอ */
+@media (max-width: 768px) {
+  .callout {
+    padding: var(--rk-space-3);
+  }
+}

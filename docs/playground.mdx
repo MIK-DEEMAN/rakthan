@@ -4,6 +4,7 @@ description: "หน้าทดสอบ component ทุกตัวของ 
 unlisted: true
 ---
 
+import Callout from '@site/src/components/Callout';
 import Diagram from '@site/src/components/Diagram';
 
 # Playground
@@ -16,6 +17,48 @@ import Diagram from '@site/src/components/Diagram';
 ถ้าคุณมาถึงหน้านี้จากการค้นหา ให้กลับไปที่ [หน้าเริ่มต้น](/docs/intro)
 
 :::
+
+## `<Callout>`
+
+ครบทั้ง 6 type แต่ละอันมีไอคอนต่างกัน — ลองปิดสีในหัวจอแล้วดูว่ายังแยกออกไหม
+
+<Callout type="misconception">
+  เพิ่มบิตทีละ 1 ตัว จำนวนค่าที่เก็บได้จะเพิ่มขึ้น**ทีละสองเท่า** ไม่ใช่เพิ่มทีละสอง
+
+  8 บิตเก็บได้ 256 ค่า ส่วน 9 บิตเก็บได้ 512 ค่า ไม่ใช่ 258
+</Callout>
+
+<Callout type="misconception" title="คนมักเข้าใจผิดว่า ตัวแปรคือกล่อง">
+  ทดสอบการใส่ `title` เอง แทนหัวเรื่องเริ่มต้น
+</Callout>
+
+<Callout type="note">
+  ตัวเลข 0.1 + 0.2 ในภาษา Python ให้ผลเป็น 0.30000000000000004 ไม่ใช่ 0.3
+</Callout>
+
+<Callout type="tip">
+  ถ้าอ่านโค้ดแล้วงง ให้ลองอ่านออกเสียงเป็นภาษาคนทีละบรรทัด
+  วิธีนี้ช่วยได้มากกว่าที่คิด และใช้ได้กับทุกภาษาโปรแกรม
+</Callout>
+
+<Callout type="warning">
+  อย่ารัน `rm -rf` โดยไม่อ่านสิ่งที่พิมพ์ไปแล้วสองรอบ — คำสั่งนี้ไม่มีถังขยะให้กู้คืน
+</Callout>
+
+<Callout type="history">
+  หน่วย "byte" ที่แปลว่า 8 บิต เพิ่งมาเป็นมาตรฐานตอน IBM System/360 ในปี 1964
+  ก่อนหน้านั้นเครื่องแต่ละรุ่นนิยาม byte ไม่เท่ากัน บางเครื่องใช้ 6 บิต บางเครื่อง 9 บิต
+</Callout>
+
+<Callout type="deepdive">
+  กล่องนี้ใช้ `<details>` ของ HTML จึงกดเปิดปิดได้แม้ JavaScript จะโหลดไม่สำเร็จ
+
+  ลองกด Tab มาที่หัวเรื่องแล้วกด Enter หรือ Space ดู — ต้องเปิดปิดได้และเห็น focus ring
+</Callout>
+
+<Callout type="deepdive" title="กล่องที่เปิดค้างไว้ตั้งแต่แรก" open>
+  ทดสอบ prop `open`
+</Callout>
 
 ## `<Diagram>`
 
