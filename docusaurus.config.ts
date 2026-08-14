@@ -3,11 +3,10 @@ import type { Config } from '@docusaurus/types';
 import rehypeKatex from 'rehype-katex';
 import remarkMath from 'remark-math';
 
-// ⚠️ TODO: แก้สองค่านี้ให้ตรงกับของจริงก่อน deploy
-//    SITE_URL — โดเมนที่ใช้จริงบน Cloudflare Pages
-//    REPO_URL — GitHub repo สำหรับปุ่ม "แก้ไขหน้านี้"
+// ⚠️ TODO: SITE_URL ยังเป็นค่าเดา — แก้ให้ตรงกับโดเมนจริงหลังตั้ง Cloudflare Pages เสร็จ
+//    (ค่าเริ่มต้นของ Cloudflare คือ https://<ชื่อโปรเจกต์>.pages.dev)
 const SITE_URL = 'https://rakthan.pages.dev';
-const REPO_URL = 'https://github.com/wisach250212/rakthan';
+const REPO_URL = 'https://github.com/MIK-DEEMAN/rakthan';
 
 const config: Config = {
   title: 'RAKTHAN',
