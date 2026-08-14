@@ -1,0 +1,155 @@
+/**
+ * <Quiz> — ใช้ token จาก custom.css เท่านั้น ห้าม hardcode สี (CI ตรวจ)
+ *
+ * ถูก/ผิด ใช้คู่สีของ callout ที่ผ่าน check-contrast.mjs มาแล้ว
+ * (tip = ถูก, warning = ผิด) และมีไอคอนกำกับเสมอ ห้ามสื่อด้วยสีอย่างเดียว
+ */
+
+.quiz {
+  margin: var(--rk-space-5) 0;
+  padding: var(--rk-space-4);
+  background: var(--rk-bg-subtle);
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius-lg);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.question {
+  display: block;
+  padding: 0;
+  margin-bottom: var(--rk-space-3);
+  font-weight: 600;
+  font-size: var(--rk-text-lg);
+  line-height: 1.75;
+  color: var(--rk-text);
+}
+
+.solvedBadge {
+  display: inline-block;
+  margin-left: var(--rk-space-2);
+  padding: 0.1em 0.6em;
+  font-size: var(--rk-text-sm);
+  font-weight: 600;
+  color: var(--rk-cal-tip-icon);
+  background: var(--rk-cal-tip-bg);
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rk-space-2);
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rk-space-2);
+  padding: var(--rk-space-2) var(--rk-space-3);
+  background: var(--rk-bg);
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius);
+  cursor: pointer;
+  /* เนื้อหาไทยห้ามต่ำกว่า 1.75 */
+  line-height: 1.85;
+  transition: border-color var(--rk-transition), background var(--rk-transition);
+}
+
+.option:hover {
+  border-color: var(--rk-primary);
+}
+
+/* focus ring ต้องอยู่ที่ทั้งกล่อง ไม่ใช่แค่วงกลม radio เล็ก ๆ
+   ไม่งั้นผู้ใช้คีย์บอร์ดแทบมองไม่เห็นว่าอยู่ตรงไหน */
+.option:has(.radio:focus-visible) {
+  outline: var(--rk-focus-width) solid var(--rk-focus);
+  outline-offset: var(--rk-focus-offset);
+}
+
+.radio {
+  margin: 0;
+  /* จัดให้ตรงกลางบรรทัดแรกของข้อความไทยซึ่งสูงกว่าปกติเพราะสระบน */
+  margin-top: 0.45em;
+  flex-shrink: 0;
+  accent-color: var(--rk-primary);
+}
+
+.optionText {
+  flex: 1;
+}
+
+.mark {
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.optionCorrect {
+  background: var(--rk-cal-tip-bg);
+  border-color: var(--rk-cal-tip-border);
+  color: var(--rk-cal-tip-icon);
+}
+
+.optionWrong {
+  background: var(--rk-cal-warning-bg);
+  border-color: var(--rk-cal-warning-border);
+  color: var(--rk-cal-warning-icon);
+}
+
+/* ── feedback ─────────────────────────────────────────────── */
+
+.feedbackArea {
+  /* กันหน้ากระตุกตอน feedback โผล่ */
+  min-height: 1px;
+}
+
+.feedbackCorrect,
+.feedbackWrong {
+  margin-top: var(--rk-space-3);
+  padding: var(--rk-space-3);
+  border-radius: var(--rk-radius);
+  border-left: 4px solid;
+  line-height: 1.85;
+}
+
+.feedbackCorrect {
+  background: var(--rk-cal-tip-bg);
+  border-left-color: var(--rk-cal-tip-border);
+}
+
+.feedbackWrong {
+  background: var(--rk-cal-warning-bg);
+  border-left-color: var(--rk-cal-warning-border);
+}
+
+.feedbackTitle {
+  margin: 0 0 var(--rk-space-1);
+  font-weight: 600;
+}
+
+.feedbackCorrect .feedbackTitle {
+  color: var(--rk-cal-tip-icon);
+}
+
+.feedbackWrong .feedbackTitle {
+  color: var(--rk-cal-warning-icon);
+}
+
+.feedbackBody {
+  color: var(--rk-text);
+}
+
+.feedbackBody > :last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .quiz {
+    padding: var(--rk-space-3);
+  }
+}

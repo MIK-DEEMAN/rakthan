@@ -7,6 +7,7 @@ unlisted: true
 import Callout from '@site/src/components/Callout';
 import Diagram from '@site/src/components/Diagram';
 import PythonRunner from '@site/src/components/PythonRunner';
+import Quiz from '@site/src/components/Quiz';
 
 # Playground
 
@@ -142,6 +143,30 @@ print(a, b)`}
 
 <PythonRunner initialCode={`print(2 ** 10)`} editable={false} />
 
+## `<Quiz>`
+
+ตัวลวงทุกตัวต้องอธิบายว่าคิดผิดตรงไหน ไม่ใช่แค่บอกว่าผิด — ตอบผิดแล้วลองใหม่ได้ไม่จำกัด
+ผลถูกเก็บใน localStorage กลับมาอ่านซ้ำจะเห็นว่าเคยตอบถูกแล้ว
+
+<Quiz
+  question="บิต 6 ตัว แทนค่าได้กี่แบบ?"
+  options={[
+    { text: '12', feedback: 'นี่คือ 6×2 — ลองทบทวนว่าเพิ่มบิตทีละตัวแล้วจำนวนแบบคูณหรือบวก' },
+    { text: '36', feedback: 'นี่คือ 6² — สังเกตว่าฐานกับเลขชี้กำลังสลับที่กัน ควรเป็น 2⁶ ไม่ใช่ 6²' },
+    { text: '64', correct: true, feedback: 'ถูกต้อง — 2⁶ = 64 เพราะแต่ละบิตเพิ่มทางเลือกเป็นสองเท่า' },
+    { text: '128', feedback: 'นี่คือ 2⁷ ซึ่งเป็นของบิต 7 ตัว ลองนับจำนวนบิตในโจทย์อีกครั้ง' },
+  ]}
+/>
+
+<Quiz
+  question="ทำไมคอมพิวเตอร์ถึงใช้เลขฐาน 2 ไม่ใช่ฐาน 10?"
+  options={[
+    { text: 'เพราะฐาน 2 คำนวณเร็วกว่า', feedback: 'ความเร็วไม่ใช่เหตุผลตั้งต้น — ลองคิดถึงอุปกรณ์ที่ใช้เก็บค่า ว่ามันแยกสถานะได้กี่แบบ' },
+    { text: 'เพราะสวิตช์ไฟฟ้ามีแค่เปิดกับปิด', correct: true, feedback: 'ถูกต้อง — วงจรแยก "มีไฟ" กับ "ไม่มีไฟ" ได้อย่างมั่นใจ แต่ถ้าต้องแยกระดับแรงดัน 10 ระดับจะพลาดง่ายมาก' },
+    { text: 'เพราะมนุษย์กำหนดมาตรฐานไว้แบบนั้น', feedback: 'มาตรฐานตามมาทีหลัง คำถามคือทำไมถึงเลือกแบบนี้ตั้งแต่แรก — เหตุผลอยู่ที่ข้อจำกัดของฮาร์ดแวร์' },
+  ]}
+/>
+
 ## Component ที่ยังไม่ได้สร้าง
 
-Phase 2 เหลือ `<Quiz>` และ `<TrackBadge>`
+`<BinaryConverter>` (Phase 3), `<LogicGate>`, `<SqlRunner>`, `<ProgressTracker>`

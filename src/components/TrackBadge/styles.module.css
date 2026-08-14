@@ -1,0 +1,90 @@
+/**
+ * <TrackBadge> — ใช้ token จาก custom.css เท่านั้น ห้าม hardcode สี (CI ตรวจ)
+ *
+ * สีของแกนวิชามาจาก --rk-track-* ซึ่งผ่าน 5:1 ทุกตัวทั้งสองโหมด
+ * ส่งเข้ามาเป็น --track-color จาก inline style ของ component
+ */
+
+.badge {
+  margin: 0 0 var(--rk-space-5);
+  padding: var(--rk-space-3);
+  background: var(--rk-bg-subtle);
+  border: 1px solid var(--rk-border);
+  border-radius: var(--rk-radius);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rk-space-2) var(--rk-space-4);
+}
+
+.track {
+  padding: 0.15em 0.75em;
+  font-weight: 600;
+  /* --rk-text-sm ใช้ได้ เพราะนี่คือข้อมูลกำกับ ไม่ใช่เนื้อหาบทเรียน */
+  font-size: var(--rk-text-sm);
+  color: var(--track-color);
+  border: 1.5px solid var(--track-color);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rk-space-2);
+  font-size: var(--rk-text-sm);
+  color: var(--rk-text);
+}
+
+.itemLabel {
+  color: var(--rk-text-muted);
+}
+
+.dots {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.dotOn,
+.dotOff {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.dotOn {
+  background: var(--rk-text);
+}
+
+.dotOff {
+  border: 1px solid var(--rk-text-muted);
+}
+
+.prereq {
+  margin: var(--rk-space-2) 0 0;
+  padding-top: var(--rk-space-2);
+  border-top: 1px solid var(--rk-border);
+  font-size: var(--rk-text-sm);
+  line-height: 1.8;
+  color: var(--rk-text);
+}
+
+.prereq .itemLabel {
+  margin-right: var(--rk-space-2);
+}
+
+/* บทที่อ้างถึงแต่ยังไม่มีอยู่จริง — validate-frontmatter.mjs ควรจับได้ก่อนถึงตรงนี้ */
+.missing {
+  color: var(--rk-text-muted);
+  text-decoration: line-through;
+}
+
+@media (max-width: 768px) {
+  .row {
+    gap: var(--rk-space-2);
+  }
+}

@@ -45,8 +45,13 @@ const {
 const prereqList = prereq ? prereq.split(',').map((s) => s.trim()).filter(Boolean) : [];
 const today = new Date().toISOString().slice(0, 10);
 
+// slug ต้องขึ้นต้นด้วย / ไม่งั้น Docusaurus เอาชื่อโฟลเดอร์มาต่อหน้า
+// แล้วย้ายบทข้ามโฟลเดอร์เมื่อไหร่ URL เปลี่ยนเมื่อนั้น (ดู CLAUDE.md หัวข้อ 7)
+const slugPath = slug.startsWith('/') ? slug : `/${slug}`;
+// ชื่อไฟล์เฉลยไม่มี / นำหน้า
+const slugBase = slugPath.slice(1);
 const lessonPath = join(ROOT, 'docs', dir, `${num}-${id}.mdx`);
-const solutionPath = join(ROOT, 'docs/appendix/solutions', `${slug}.mdx`);
+const solutionPath = join(ROOT, 'docs/appendix/solutions', `${slugBase}.mdx`);
 
 if (existsSync(lessonPath)) {
   console.error(`มีไฟล์นี้อยู่แล้ว: ${lessonPath}`);
@@ -57,7 +62,7 @@ if (existsSync(lessonPath)) {
 
 const lesson = `---
 id: ${id}
-slug: ${slug}
+slug: ${slugPath}
 title: "${title}"
 description: "TODO: เขียนคำอธิบายอย่างน้อย 20 ตัวอักษร ใช้ทำ meta description บน Google"
 track: ${track}
@@ -140,7 +145,7 @@ print(____)\`} />
 
 ## แบบฝึกหัด
 
-{/* ห้ามใส่เฉลยที่นี่ — เฉลยอยู่ที่ docs/appendix/solutions/${slug}.mdx */}
+{/* ห้ามใส่เฉลยที่นี่ — เฉลยอยู่ที่ docs/appendix/solutions/${slugBase}.mdx */}
 
 ### ง่าย
 
@@ -161,7 +166,7 @@ print(____)\`} />
 7. TODO
 8. TODO
 
-→ [ดูเฉลย](/docs/appendix/solutions/${slug})
+→ [ดูเฉลย](/docs/appendix/solutions/${slugBase})
 
 ## เช็คก่อนไปต่อ
 
@@ -236,7 +241,7 @@ TODO
 
 ---
 
-← กลับไปที่ [${title}](/docs/${slug})
+← กลับไปที่ [${title}](/docs${slugPath})
 `;
 
 mkdirSync(dirname(lessonPath), { recursive: true });
@@ -250,7 +255,7 @@ if (existsSync(solutionPath)) {
 
 console.log(`สร้างแล้ว:
   บทเรียน  docs/${dir}/${num}-${id}.mdx
-  เฉลย     docs/appendix/solutions/${slug}.mdx
+  เฉลย     docs/appendix/solutions/${slugBase}.mdx
 
 ขั้นถัดไป:
   1. เติม description ใน frontmatter (บังคับ)

@@ -139,8 +139,10 @@ function validateOne(fullPath, fm, rel) {
     }
   }
 
-  requireField('slug', (v) => typeof v === 'string' && !/^\d/.test(v),
-    'ต้องเป็นข้อความและห้ามขึ้นต้นด้วยตัวเลข');
+  // slug ต้องขึ้นต้นด้วย / ไม่งั้น Docusaurus จะเอาชื่อโฟลเดอร์มาต่อหน้าให้
+  // แล้วย้ายบทข้ามโฟลเดอร์เมื่อไหร่ URL เปลี่ยนเมื่อนั้น ซึ่งผิดวัตถุประสงค์ของฟิลด์นี้
+  requireField('slug', (v) => typeof v === 'string' && v.startsWith('/') && !/^\/\d/.test(v),
+    'ต้องขึ้นต้นด้วย / เช่น /how-computers-think และห้ามตามด้วยตัวเลข');
 
   if (fm.prerequisites === undefined) {
     err(rel, 'ขาดฟิลด์บังคับ: prerequisites (ถ้าไม่มีบทก่อนหน้าให้ใส่ [])');
@@ -232,12 +234,13 @@ function run() {
   // ── บทที่ published ต้องมีเฉลย ──
   for (const p of parsed) {
     if (p.fm.status !== 'published' || !p.fm.slug) continue;
+    // slug มี / นำหน้า แต่ชื่อไฟล์เฉลยไม่มี
+    const base = String(p.fm.slug).replace(/^\//, '');
     const hasSolution =
-      existsSync(join(SOLUTIONS, `${p.fm.slug}.mdx`)) ||
-      existsSync(join(SOLUTIONS, `${p.fm.slug}.md`));
+      existsSync(join(SOLUTIONS, `${base}.mdx`)) || existsSync(join(SOLUTIONS, `${base}.md`));
     if (!hasSolution) {
       err(p.rel,
-        `status: published แต่ไม่มีไฟล์เฉลย docs/appendix/solutions/${p.fm.slug}.mdx\n` +
+        `status: published แต่ไม่มีไฟล์เฉลย docs/appendix/solutions/${base}.mdx\n` +
         '    (เฉลยต้องเขียนพร้อมบท ไม่ใช่ตามมาทีหลัง — ดู CONTRIBUTING.md หัวข้อ 6)');
     }
   }
