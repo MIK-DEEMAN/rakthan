@@ -29,12 +29,20 @@ const TOKEN_FILE = join(SRC, 'css/custom.css');
 
 const LESSON_FILE = /^(\d{2})-(.+)\.mdx$/;
 
-// กรอบงบคำจาก CONTRIBUTING.md หัวข้อ 3.5
-const WORDS_MIN = 1800;
-const WORDS_MAX = 3000;
-// เกินกรอบนี้ถือว่าผิดแน่ ๆ ไม่ใช่ความคลาดเคลื่อนของการประมาณ
-const WORDS_HARD_MIN = 1200;
-const WORDS_HARD_MAX = 4200;
+// งบคำผูกกับ duration ไม่ใช่ค่าคงที่ (CONTRIBUTING.md หัวข้อ 3.5)
+//
+// ของเดิมตั้งไว้ 1,800-3,000 คำเท่ากันทุกบท ซึ่งผิด เพราะ duration ต่างกันได้เท่าตัว
+// (60-120 นาที) บทสั้นที่เขียนกระชับดีอยู่แล้วจะโดนเตือนโดยไม่มีเหตุผล
+// แล้วคนเขียนจะเติมน้ำให้ผ่านเกณฑ์ ซึ่งแย่กว่าปล่อยให้สั้น
+//
+// 25-42 คำต่อนาที มาจากการยึดปลายทั้งสองของกรอบเดิมเป็นหลัก
+const WORDS_PER_MINUTE_MIN = 25;
+const WORDS_PER_MINUTE_MAX = 42;
+// นอกกรอบนี้ถือว่าผิดแน่ ๆ ไม่ใช่ความคลาดเคลื่อนของการประมาณ
+const HARD_FACTOR_MIN = 0.65;
+const HARD_FACTOR_MAX = 1.4;
+/** duration เริ่มต้นถ้าอ่านจาก frontmatter ไม่ได้ */
+const DEFAULT_DURATION = 90;
 
 // ความยาวคำไทยเฉลี่ยรวมสระและวรรณยุกต์
 const THAI_CHARS_PER_WORD = 4.5;
@@ -103,14 +111,20 @@ function checkLessons() {
         '    วิธีหา: "ถ้าผู้เรียนอ่านบทนี้แบบผิวเผิน เขาจะสรุปผิดว่าอะไร"');
     }
 
-    // 3. งบคำ (ประมาณการ)
+    // 3. งบคำ (ประมาณการ) — ปรับตาม duration ของบทนั้น
+    const durationMatch = raw.match(/^duration:\s*(\d+)/m);
+    const duration = durationMatch ? Number(durationMatch[1]) : DEFAULT_DURATION;
+    const min = Math.round(duration * WORDS_PER_MINUTE_MIN);
+    const max = Math.round(duration * WORDS_PER_MINUTE_MAX);
     const words = estimateWords(prose);
-    if (words < WORDS_HARD_MIN) {
-      err(rel, `ประมาณ ${words} คำ — สั้นกว่ากรอบ ${WORDS_MIN}-${WORDS_MAX} มาก เนื้อหาน่าจะยังไม่ครบ`);
-    } else if (words > WORDS_HARD_MAX) {
-      err(rel, `ประมาณ ${words} คำ — ยาวกว่ากรอบ ${WORDS_MIN}-${WORDS_MAX} มาก ควรแยกเป็น 2 บท`);
-    } else if (words < WORDS_MIN || words > WORDS_MAX) {
-      warn(rel, `ประมาณ ${words} คำ — นอกกรอบ ${WORDS_MIN}-${WORDS_MAX} เล็กน้อย (ตัวเลขนี้คลาดเคลื่อนได้ ±20%)`);
+    const range = `${min}-${max} คำ (จาก duration ${duration} นาที)`;
+
+    if (words < Math.round(min * HARD_FACTOR_MIN)) {
+      err(rel, `ประมาณ ${words} คำ — สั้นกว่ากรอบ ${range} มาก เนื้อหาน่าจะยังไม่ครบ`);
+    } else if (words > Math.round(max * HARD_FACTOR_MAX)) {
+      err(rel, `ประมาณ ${words} คำ — ยาวกว่ากรอบ ${range} มาก ควรแยกเป็น 2 บท`);
+    } else if (words < min || words > max) {
+      warn(rel, `ประมาณ ${words} คำ — นอกกรอบ ${range} เล็กน้อย (ตัวเลขนี้คลาดเคลื่อนได้ ±20%)`);
     }
   }
 

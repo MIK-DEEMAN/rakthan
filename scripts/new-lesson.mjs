@@ -188,6 +188,7 @@ print(____)\`} />
 
 const solution = `---
 title: "เฉลย — ${title}"
+draft: true
 description: "เฉลยแบบฝึกหัดของบท ${title} พร้อมคำอธิบายวิธีคิด"
 ---
 

@@ -231,6 +231,28 @@ function run() {
     if (color.get(id) === WHITE) visit(id);
   }
 
+  // ── เฉลยต้องมีสถานะ draft ตรงกับบทของมัน ──
+  //
+  // ถ้าบทเป็น draft แต่เฉลยไม่ใช่ Docusaurus จะสร้างหน้าเฉลยขึ้น production
+  // ทั้งที่บทยังไม่ขึ้น แล้วลิงก์ "กลับไปที่บท" ในเฉลยจะเสีย ทำให้ build พัง
+  // (เจอจริงตอนเขียนบท 0.1)
+  for (const p of parsed) {
+    if (!p.fm.slug) continue;
+    const base = String(p.fm.slug).replace(/^\//, '');
+    const solPath = join(SOLUTIONS, `${base}.mdx`);
+    if (!existsSync(solPath)) continue;
+    const solFm = parseFrontmatter(readFileSync(solPath, 'utf8'), `docs/appendix/solutions/${base}.mdx`);
+    if (!solFm) continue;
+    const lessonDraft = p.fm.draft === true;
+    const solDraft = solFm.draft === true;
+    if (lessonDraft !== solDraft) {
+      err(`docs/appendix/solutions/${base}.mdx`,
+        `สถานะ draft ไม่ตรงกับบท ${p.rel}\n` +
+        `    บท draft: ${lessonDraft} แต่เฉลย draft: ${solDraft}\n` +
+        '    ถ้าไม่ตรงกัน เฉลยจะขึ้น production ทั้งที่บทยังไม่ขึ้น แล้วลิงก์กลับไปหาบทจะเสีย');
+    }
+  }
+
   // ── บทที่ published ต้องมีเฉลย ──
   for (const p of parsed) {
     if (p.fm.status !== 'published' || !p.fm.slug) continue;
