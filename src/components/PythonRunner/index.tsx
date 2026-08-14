@@ -1,3 +1,4 @@
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
 import styles from './styles.module.css';
@@ -81,6 +82,7 @@ export default function PythonRunner({
   /** กด Escape แล้ว Tab ถัดไปจะย้าย focus ออก แทนที่จะเติมช่องว่าง */
   const escapeArmedRef = useRef(false);
 
+  const workerUrl = useBaseUrl('/pyodide-worker.js');
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const codeId = `rk-code-${uid}`;
   const stdinId = `rk-stdin-${uid}`;
@@ -118,11 +120,11 @@ export default function PythonRunner({
     // สร้าง worker ใหม่ทุกครั้ง เพื่อให้ตัวแปรจากการรันครั้งก่อนไม่ค้างมา
     // ทำให้ผลลัพธ์ที่ผู้เรียนเห็นตรงกับโค้ดที่อยู่ตรงหน้าเสมอ
     killWorker();
-    // type: 'module' จำเป็น — worker โหลด Pyodide ด้วย dynamic import
-    // เพราะ importScripts() โหลดสคริปต์ข้าม origin ไม่สำเร็จ (ดูคอมเมนต์ในไฟล์ worker)
-    const worker = new Worker(new URL('./pyodide.worker.js', import.meta.url), {
-      type: 'module',
-    });
+    // โหลด worker จาก static/ ไม่ใช่ผ่าน new URL(..., import.meta.url)
+    // เพราะ webpack จะเขียนทับ { type: 'module' } เป็น { type: undefined }
+    // ทำให้กลายเป็น classic worker แล้ว dynamic import ข้างในพัง
+    // (เหตุผลเต็มอยู่ในหัวไฟล์ static/pyodide-worker.js)
+    const worker = new Worker(workerUrl, { type: 'module' });
     workerRef.current = worker;
 
     worker.onmessage = (event: MessageEvent) => {
@@ -167,7 +169,7 @@ export default function PythonRunner({
     };
 
     worker.postMessage({ type: 'run', code, stdin: input, packages });
-  }, [busy, code, input, packages, timeout, killWorker]);
+  }, [busy, code, input, packages, timeout, killWorker, workerUrl]);
 
   const stop = () => {
     killWorker();

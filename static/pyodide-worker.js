@@ -4,8 +4,18 @@
  * ทำไมต้องเป็น Worker: ถ้ารันบน main thread โค้ดที่มีลูปไม่รู้จบจะทำให้ทั้งหน้าค้าง
  * ผู้เรียนปิดแท็บไม่ได้ด้วยซ้ำ — และผู้เรียนมือใหม่เขียนลูปไม่รู้จบกันทุกคน
  *
- * ไฟล์นี้เป็น .js ไม่ใช่ .ts โดยตั้งใจ เพราะ worker ถูกโหลดผ่าน new Worker(new URL(...))
- * ซึ่งไม่ผ่าน pipeline ของ TypeScript
+ * ❗ ไฟล์นี้ต้องอยู่ใน static/ ห้ามย้ายไป src/
+ *
+ * เหตุผล: worker ตัวนี้ต้องเป็น **module worker** เพราะโหลด Pyodide ด้วย
+ * dynamic import (importScripts ใช้ไม่ได้ ดูคอมเมนต์ในฟังก์ชัน getPyodide)
+ * แต่ถ้าให้ webpack bundle ให้ มันจะเขียนทับ option ที่เราส่งไปเป็น
+ *     new Worker(url, Object.assign({}, {type:"module"}, {type: void 0}))
+ * ซึ่งบังคับให้กลายเป็น classic worker แล้ว dynamic import จะพังทันที
+ * (ตรวจพบจาก build จริงตอนไล่หาสาเหตุที่ Pyodide โหลดไม่ขึ้น)
+ *
+ * ไฟล์ใน static/ ถูกคัดลอกตรง ๆ ไม่ผ่าน webpack จึงคุม type ของ worker ได้เอง
+ *
+ * ผลข้างเคียงที่ต้องรับไว้: ไฟล์นี้ไม่ถูกตรวจด้วย TypeScript และไม่ถูก minify
  *
  * ข้อกำหนดที่ยึดไว้ (CLAUDE.md หัวข้อ 4/C2):
  *   - ห้ามใช้ SharedArrayBuffer / Atomics.wait เพราะต้องเปิด COOP+COEP ทั้งไซต์
@@ -38,7 +48,7 @@ async function getPyodide() {
     // module worker + dynamic import ทำงานได้ จึงใช้วิธีนี้แทน
     let loadPyodide;
     try {
-      ({ loadPyodide } = await import(/* webpackIgnore: true */ `${INDEX_URL}pyodide.mjs`));
+      ({ loadPyodide } = await import(`${INDEX_URL}pyodide.mjs`));
     } catch (err) {
       // เน็ตหลุด CDN ล่ม หรือเครือข่ายของโรงเรียนบล็อก jsdelivr
       // ต้องแยกจากข้อผิดพลาดในโค้ดของผู้เรียน ไม่งั้นผู้เรียนจะนึกว่าตัวเองเขียนผิด
