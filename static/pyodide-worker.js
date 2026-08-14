@@ -35,6 +35,40 @@ function post(message) {
   self.postMessage(message);
 }
 
+/**
+ * ตัดเฟรมที่เป็นเครื่องในของ Pyodide ออกจาก traceback
+ *
+ * ทำไมต้องมี: บท 0.10 สอนผู้เรียนอ่าน traceback ถ้าปล่อยให้เห็นบรรทัดอย่าง
+ *   File "/lib/python314.zip/_pyodide/_base.py", line 597, in eval_code_async
+ * ผู้เรียนมือใหม่จะไปไล่หาบั๊กในไฟล์ที่ตัวเองไม่ได้เขียน และสรุปว่า Python พัง
+ *
+ * เก็บเฉพาะเฟรมที่มาจากโค้ดของผู้เรียนไว้ ส่วนบรรทัดสรุปข้อผิดพลาดบรรทัดสุดท้าย
+ * (เช่น NameError: name 'x' is not defined) ยังอยู่ครบ เพราะนั่นคือส่วนที่ต้องอ่าน
+ */
+const INTERNAL_FRAME = /File "(\/lib\/python[\d.]*\.zip|.*_pyodide[/\\]).*"/;
+const PRELUDE_FRAME = /File "<exec>".*in _rk_input/;
+
+function cleanTraceback(text) {
+  const lines = String(text).split('\n');
+  const kept = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (INTERNAL_FRAME.test(lines[i]) || PRELUDE_FRAME.test(lines[i])) {
+      // ข้ามบรรทัดโค้ดที่ตามหลังเฟรมนั้นด้วย (traceback วางคู่กันเสมอ)
+      while (
+        i + 1 < lines.length &&
+        lines[i + 1].trim() !== '' &&
+        !/^\s*File "/.test(lines[i + 1]) &&
+        /^\s/.test(lines[i + 1])
+      ) {
+        i++;
+      }
+      continue;
+    }
+    kept.push(lines[i]);
+  }
+  return kept.join('\n').replace(/\n{3,}/g, '\n\n');
+}
+
 async function getPyodide() {
   if (pyodidePromise) return pyodidePromise;
 
@@ -83,10 +117,13 @@ def _rk_input(prompt=""):
     try:
         line = next(_rk_lines)
     except StopIteration:
+        # "from None" สำคัญมาก — ถ้าไม่ใส่ Python จะพ่วง StopIteration ขึ้นมาก่อน
+        # พร้อมข้อความ "During handling of the above exception..." ซึ่งบังข้อความไทย
+        # ที่เราตั้งใจเขียนให้ผู้เรียนอ่าน แล้วผู้เรียนจะไปไล่หา StopIteration แทน
         raise EOFError(
             "โปรแกรมเรียก input() แต่ช่องอินพุตไม่มีข้อมูลเหลือแล้ว\\n"
             "ให้เติมข้อมูลในช่อง \\"อินพุต\\" เพิ่มอีกหนึ่งบรรทัด แล้วกดรันใหม่"
-        )
+        ) from None
     print(str(prompt) + line)
     return line
 
@@ -133,7 +170,7 @@ self.onmessage = async (event) => {
         type: 'result',
         ok: false,
         stdout,
-        stderr: stderr + (err && err.message ? err.message : String(err)),
+        stderr: cleanTraceback(stderr + (err && err.message ? err.message : String(err))),
       });
     }
   } finally {
